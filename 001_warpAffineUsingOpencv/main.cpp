@@ -1,3 +1,6 @@
+
+//ref：https://blog.csdn.net/keith_bb/article/details/56331356 
+
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -53,6 +56,9 @@ int main(int argc,char *agrv[])
     //计算仿射变换矩阵
     warp_mat = getAffineTransform(srcTri, dstTri);
 
+    cout<<"计算得到的仿射变换矩阵为："<<endl;
+    cout<<warp_mat<<endl;
+
     //对加载图形进行仿射变换操作
     warpAffine(srcImage, warp_dstImage, warp_mat, warp_dstImage.size());
 
@@ -63,6 +69,8 @@ int main(int argc,char *agrv[])
 
     //计算旋转矩阵
     rot_mat = getRotationMatrix2D(center, angle, scale);
+    cout<<"计算得到的旋转矩阵为："<<endl;
+    cout<<rot_mat<<endl;
 
     //旋转已扭曲图像
     warpAffine(warp_dstImage, warp_rotate_dstImage, rot_mat, warp_dstImage.size());
@@ -77,6 +85,7 @@ int main(int argc,char *agrv[])
     namedWindow(warp_windowName, WINDOW_AUTOSIZE);
     imshow(warp_windowName, warp_dstImage);
 
+
     namedWindow(warp_rotate_windowName, WINDOW_AUTOSIZE);
     imshow(warp_rotate_windowName, warp_rotate_dstImage);
 
@@ -88,4 +97,4 @@ int main(int argc,char *agrv[])
     return 0;
 }
 
-//原文：https://blog.csdn.net/keith_bb/article/details/56331356 
+
