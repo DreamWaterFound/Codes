@@ -6,7 +6,7 @@ project(warpAffine)
 find_package(OpenCV 3 REQUIRED)
 
 if(OPENCV_FOUND)
-    message(STATUS "OpenCV Found.")
+    message(STATUS "OpenCV Found, include path: " ${OpenCV_INCLUDE_DIRS})
     include_directories(${OpenCV_INCLUDE_DIRS})
     add_executable(warpAffine main.cpp)
     target_link_libraries(warpAffine ${OpenCV_LIBS})
