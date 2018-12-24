@@ -3,9 +3,11 @@
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
 #
+# 它这里说的应该是，如果出现了两个##就认为是对于标签本身的注释？ TODO
 # All text after a double hash (##) is considered a comment and is placed in
 # front of the TAG it is preceding.
 #
+# 而对于单个的#则认为是正常的注释，并且将会被忽略掉
 # All text after a single hash (#) is considered a comment and will be ignored.
 # The format is:
 # TAG = value [value, ...]
@@ -23,6 +25,7 @@
 # built into libc) for the transcoding. See http://www.gnu.org/software/libiconv
 # for the list of possible encodings.
 # The default value is: UTF-8.
+# 指的是doxygen所生成的代码文件的编码格式。默认值是UTF-8。这说明它可以支持多种语言。
 
 DOXYFILE_ENCODING      = UTF-8
 
@@ -31,8 +34,9 @@ DOXYFILE_ENCODING      = UTF-8
 # project for which the documentation is generated. This name is used in the
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
-
-PROJECT_NAME           = "My Project"
+# 生成的文件中所说明的这个工程名称。如果是单个单词可以直接写，但是如果是含有空格的多个
+# 单词序列的话，就需要使用双引号括起来以表示引用。
+PROJECT_NAME           = "Doxygen Demo Project"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
