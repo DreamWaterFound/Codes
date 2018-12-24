@@ -4,6 +4,8 @@
 
 using namespace std;
 
+//这个文件是主文件。
+
 int main(int argc,char *argv[])
 {
     cout<<"Doxygen Demo."<<endl;

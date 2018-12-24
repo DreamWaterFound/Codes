@@ -1,5 +1,7 @@
 #include "classA.h"
 
+//类A的实现文件。
+
 A::A()
 {
     cout<<"类A的无参数构造函数被调用。"<<endl;
