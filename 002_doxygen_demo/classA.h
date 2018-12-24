@@ -89,7 +89,7 @@ public:
     * @remarks 这里是备注信息
     * @todo 这里是将来需要完成的工作
     * @bug 这里是遇到的BUG
-    * @example 这里是例子？？？？
+    * 
     */
     int OpenFile(const char* fileName, const char* fileMode)
     {

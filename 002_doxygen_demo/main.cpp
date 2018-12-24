@@ -17,10 +17,6 @@
 //使用标准名字空间
 using namespace std;
 
-<<<<<<< HEAD
-//这个文件是主文件。
-
-=======
 /**
  * @brief 主函数
  * 
@@ -28,7 +24,6 @@ using namespace std;
  * @param argv 参数队列
  * @return int 返回值恒为0，表示程序正常退出。
  */
->>>>>>> add_doxygen_2
 int main(int argc,char *argv[])
 {
     cout<<"Doxygen Demo."<<endl;
