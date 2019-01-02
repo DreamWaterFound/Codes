@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     LOG(INFO)<<"Hello glog";
     LOG(WARNING)<<"Warning msg";
     LOG(ERROR)<<"error msg";
-    //LOG(FATAL)<<"fatal msg";
+    LOG(FATAL)<<"fatal msg";
     
 
     
