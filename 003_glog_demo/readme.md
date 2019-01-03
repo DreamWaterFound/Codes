@@ -42,11 +42,13 @@
 
 # 四、参考
 
-// TODO 
+- [glog 入门教程](https://blog.csdn.net/sinat_25929227/article/details/73832280)
+- [Cmake中的Glog用法浅析](https://blog.csdn.net/handsome_for_kill/article/details/69808446)
+  
+下面是一些高级功能，目前还没有进行尝试
 
-- [Doxygen 10 分钟入门教程](http://cedar-renjun.github.io/2014/03/21/learn-doxygen-in-10-minutes/index.html)
-- [DOXYGEN简明实用教程](https://my.oschina.net/u/2306127/blog/484501)
-- [Doxygen注释规范](https://blog.csdn.net/qq_25779555/article/details/77737391)
+- [glog使用与功能修改](https://www.cppfans.org/1566.html)
+- [glog](http://www.cnblogs.com/tianyajuanke/archive/2013/02/22/2921850.html)
 
 
 

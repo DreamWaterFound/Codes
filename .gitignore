@@ -2,9 +2,5 @@
 *.out
 *.o
 */build/*
-
-<<<<<<< HEAD
 */doc/html/
-=======
-*/doc/html/
->>>>>>> add_doxygen_2
+*/log/
