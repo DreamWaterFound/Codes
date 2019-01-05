@@ -89,6 +89,40 @@ public:
         return mnFPS;
     }
 
+    /**
+     * @brief Get the Frame Size 
+     * 
+     * @return cv::Size 帧的大小
+     */
+    inline cv::Size getFrameSize(void)
+    {
+        return mFrameSize;
+    }
+
+    /**
+     * @brief Get the Frame Channels 
+     * 
+     * @return int 帧的颜色通道数
+     */
+    inline int getFrameChannels(void)
+    {
+        return mnFrameChannels;
+    }
+
+private:
+
+    /**
+     * @brief 根据图像序列的第一帧来确定图像帧的大小
+     * 
+     */
+    void checkFrameSizeChannels(void);
+
+    /**
+     * @brief 确定这组图像序列的长度
+     * 
+     */
+    void checkFrameLength(void);
+
 private:
 
     ///图像帧率
@@ -101,4 +135,6 @@ private:
     int mnCurFramePos;
     ///数据集的路径
     string data_path;
+    ///帧的通道数
+    int mnFrameChannels;
 };

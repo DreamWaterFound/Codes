@@ -19,38 +19,36 @@ Mat MoveDetect(Mat background,
   * 
   * @return int 正常返回
   */
-int main()
+int main(int argc,char* argv[])
 {
 	DataReader reader;
 
 	cout<<"程序开始运行。"<<endl;
 
-	if(reader.openSeq(DATA_PATH))
+	//参数检查,参数0 1-目录 2-模式
+	if(argc<2)
+	{
+		cout<<"[usage] "<<argv[0]<<" data_path [mode]"<<endl;
+		return 0;
+	}
+
+	cout<<"数据库的路径为："<<argv[1]<<endl;
+	cout<<"正在尝试打开数据库..."<<endl;
+	if(reader.openSeq(argv[1]))
 	{
 		//打开成功了
-		cout<<"打开成功，数据集中一共有 "<< reader.getTotalFrames() 
-			<<"帧"<<endl;
+		cout<<"打开成功，数据集的相关信息："<<endl;
+		cout<<"大小："<< reader.getFrameSize().height <<" x "<<reader.getFrameSize().width <<endl;
+		cout<<"通道："<< reader.getFrameChannels()<<endl;
+		cout<<"长度："<< reader.getTotalFrames() <<endl;
+		cout<<"FPS: "<< reader.getFPS()<<endl;
+		
 	}
 	else
 	{
 		cout<<"打开失败。"<<endl;
 		return 0;
 	}
-
-
-
-
-	/*
-	//声明一个视频捕获类的对象，打开指定的视频文件
-	VideoCapture video("bike.avi");//定义VideoCapture类video
-
-    //检查视频文件是否能够被正常打开
-	if (!video.isOpened())	//对video进行异常检测
-	{
-		cout << "video open error!" << endl;
-		return 0;
-	}
-	*/
 
     //获取总帧数
 	int frameCount = reader.getTotalFrames();
@@ -63,13 +61,12 @@ int main()
 	cv::Mat result;//存储结果图像
 
     //开始遍历视频序列中的所有帧
-	for (int i = 0; i < frameCount; i++)
+	for (int i = 1; i < frameCount; i++)
 	{
 		if(reader.getNewFrame(frame))
 		{
 			//如果为真，那么说明读取成功,显示
-			cv::imshow("frame",frame);
-			
+			cv::imshow("frame",frame);			
 		}
 		else
 		{
@@ -77,38 +74,37 @@ int main()
 			continue;
 		}
 
-		/*
-        //从视频中读取一帧，并且显示
-		video >> frame;
-		imshow("frame", frame);
-
-        //只有当帧非空的时候才回对帧进行处理
-		if (frame.empty())
-		{
-			cout << "frame is empty!" << endl;
-			break;
-		}
-
         //获取帧位置（第几帧）并输出
-		int framePosition = video.get(CV_CAP_PROP_POS_FRAMES);
-		cout << "framePosition: " << framePosition << endl;
+		//int framePosition = video.get(CV_CAP_PROP_POS_FRAMES);
+		//cout << "framePosition: " << framePosition << endl;
 
         //将第一帧作为背景图像        
-		if (framePosition == 1)
+		if (i == 1)
+		{
 			background = frame.clone();
-        
+		}
+			
+       
         //调用MoveDetect()进行运动物体检测，返回值存入result，并且显示结果
 		result = MoveDetect(background, frame);
-		imshow("result", result);
-		*/
-        
 		
+		imshow("result", result);
+		
+
+		if(i==1)
+		{
+			//输出一些调试信息
+			cout<<"第一帧处理完成，暂停。调整好窗口后按任意键，继续."<<endl;
+			getchar();
+		}
+
 		if (waitKey(1000.0/FPS) == 27)//按原FPS显示
 		{
 			cout << "ESC退出!" << endl;
 			break;
 		}
 
+		//输出进度
 		if(i%100==0)
 		{
 			cout<<"Frame: "<<i<<" / "<<frameCount<<endl;
@@ -116,6 +112,7 @@ int main()
 		
 	}//对视频中的所有帧进行遍历
 	
+	cout<<"处理完成。"<<endl;
 	return 0;
 }
 
@@ -135,6 +132,7 @@ Mat MoveDetect(Mat background, Mat frame)
 		param[in] code 		色彩空间的转换模式, CV_BGR2GRAY 表示将RGB图像转换成为灰度图像
 		void cv::CvtColor( const CvArr* src, CvArr* dst, int code );
 	*/
+
 	cvtColor(background, gray1, CV_BGR2GRAY);
 	cvtColor(frame, gray2, CV_BGR2GRAY);
 
@@ -275,6 +273,6 @@ Mat MoveDetect(Mat background, Mat frame)
 				  Scalar(0, 255, 0), 	//颜色为红色？
 				  2);					//线宽为2
 	}
-
+	
 	return result;//返回result图像
 }

@@ -33,4 +33,10 @@ using namespace std;
  */
 #define DATA_PATH "/home/guoqing/Datasets/CDW-2014/dataset/baseline/highway/input"
 
+/**
+ * @brief 帧序列的播放速度
+ * 
+ */
+#define SEQ_FPS 30
+
 
