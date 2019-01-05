@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/include/",
                 "/home/guoqing/libraries/opencv_331/include"
             ],
             "defines": [],

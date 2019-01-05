@@ -12,9 +12,14 @@ if(OPENCV_FOUND)
     message(STATUS "Include directory:" ${OpenCV_INCLUDE_DIRS})
 
     include_directories(${OpenCV_INCLUDE_DIRS})
-    add_executable(motionDetect_backSub main.cpp)
+    include_directories(${PROJECT_SOURCE_DIR}/include)
 
-    target_link_libraries(motionDetect_backSub ${OpenCV_LIBS})
+    add_executable(${PROJECT_NAME}
+    src/main.cpp
+    src/DataReader.cpp
+    )
+
+    target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 else(OPENCV_FOUND)
 message(ERROR "OpenCV NOT Found!")

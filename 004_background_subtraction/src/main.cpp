@@ -1,15 +1,8 @@
 
 ///运动物体检测——背景减法
 //包含的这个头文件强啊
-#include "opencv2/opencv.hpp"
-#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"
-
-#include <iostream>
-#include <vector>
-
-using namespace cv;
-using namespace std;
+#include "common.h"
+#include "DataReader.h"
 
 /**
  * @brief 运动物体检测函数
@@ -28,6 +21,26 @@ Mat MoveDetect(Mat background,
   */
 int main()
 {
+	DataReader reader;
+
+	cout<<"程序开始运行。"<<endl;
+
+	if(reader.openSeq(DATA_PATH))
+	{
+		//打开成功了
+		cout<<"打开成功，数据集中一共有 "<< reader.getTotalFrames() 
+			<<"帧"<<endl;
+	}
+	else
+	{
+		cout<<"打开失败。"<<endl;
+		return 0;
+	}
+
+
+
+
+	/*
 	//声明一个视频捕获类的对象，打开指定的视频文件
 	VideoCapture video("bike.avi");//定义VideoCapture类video
 
@@ -37,11 +50,12 @@ int main()
 		cout << "video open error!" << endl;
 		return 0;
 	}
+	*/
 
     //获取总帧数
-	int frameCount = video.get(CV_CAP_PROP_FRAME_COUNT);
+	int frameCount = reader.getTotalFrames();
     //获取播放速率
-	double FPS = video.get(CV_CAP_PROP_FPS);
+	double FPS = reader.getFPS();
     
     //用到的一些图像
 	cv::Mat frame;//存储帧
@@ -51,6 +65,19 @@ int main()
     //开始遍历视频序列中的所有帧
 	for (int i = 0; i < frameCount; i++)
 	{
+		if(reader.getNewFrame(frame))
+		{
+			//如果为真，那么说明读取成功,显示
+			cv::imshow("frame",frame);
+			
+		}
+		else
+		{
+			//读取不成功？跳过
+			continue;
+		}
+
+		/*
         //从视频中读取一帧，并且显示
 		video >> frame;
 		imshow("frame", frame);
@@ -73,14 +100,22 @@ int main()
         //调用MoveDetect()进行运动物体检测，返回值存入result，并且显示结果
 		result = MoveDetect(background, frame);
 		imshow("result", result);
-
-        //????
+		*/
+        
+		
 		if (waitKey(1000.0/FPS) == 27)//按原FPS显示
 		{
 			cout << "ESC退出!" << endl;
 			break;
 		}
+
+		if(i%100==0)
+		{
+			cout<<"Frame: "<<i<<" / "<<frameCount<<endl;
+		}
+		
 	}//对视频中的所有帧进行遍历
+	
 	return 0;
 }
 
