@@ -180,7 +180,7 @@ Mat MoveDetect(Mat background, Mat frame)
 						- MORPH_RECT 	矩形
 						- MORPH_CORSS	交叉形
 						- MORPH_ELLIPSE	椭圆形
-		param esize 	内核的形状
+		param esize 	内核的大小
 		param anchor 	锚点位置
 		return cv::Mat 	内核矩阵
 		
