@@ -25,3 +25,26 @@ MotionDetector_base::~MotionDetector_base()
 {
     ;
 }
+
+//设置帧的大小
+bool MotionDetector_base::setFrameSize(int height,int width)
+{
+    return setFrameSize(cv::Size(height,width));
+}
+
+//设置帧的大小
+bool MotionDetector_base::setFrameSize(cv::Size size)
+{
+    //检查参数
+    if(size.height<1 || size.width<1)
+    {
+        return false;
+    }
+    else
+    {
+        mFrameSize=size;
+        return true;
+    }
+}
+
+

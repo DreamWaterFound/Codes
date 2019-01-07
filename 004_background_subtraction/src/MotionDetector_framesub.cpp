@@ -20,24 +20,23 @@ MotionDetector_framesub::~MotionDetector_framesub()
 //计算差分图像
 cv::Mat MotionDetector_framesub::calcuDiffImg(cv::Mat frame)
 {
-    
-        
-    //然后检查一下上一帧是否存储
+    //检查一下上一帧是否存储
     if(!mbIsLastFrameExist)
     {
         mbIsLastFrameExist=true;
         //灰度化
         cv::cvtColor(frame,mmGrayFrame,CV_BGR2GRAY);
         //本帧也是上一帧的灰度图像
-        mmGrayLastFrame=mmGrayFrame;
+        mmGrayLastFrame=mmGrayFrame.clone();
     }
     else
     {
-        mmGrayLastFrame=mmGrayFrame;
+        mmGrayLastFrame=mmGrayFrame.clone();
         //灰度化
         cv::cvtColor(frame,mmGrayFrame,CV_BGR2GRAY);
     }
 
+    //作差
     cv::absdiff(mmGrayLastFrame,mmGrayFrame,mmDiff);
 
     return mmDiff;
@@ -46,8 +45,6 @@ cv::Mat MotionDetector_framesub::calcuDiffImg(cv::Mat frame)
 //================参数设置====================
 void MotionDetector_framesub::resetDetector(void)
 {
-    
-    //mmLastFrame=cv::Mat(mFrameSize,CV_8UC3,Scalar(0,0,0));
     mmGrayLastFrame=cv::Mat(mFrameSize,CV_8UC1,Scalar(0));
     mbIsLastFrameExist=false;
     resetDetector_base();

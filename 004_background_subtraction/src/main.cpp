@@ -1,32 +1,15 @@
-
-///运动物体检测——背景减法
-//包含的这个头文件强啊
-#include "common.h"
-#include "DataReader.h"
-#include "MotionDetector_backsub.h"
-#include "MotionDetector_framesub.h"
-
 /**
- * @brief 显示程序的命令行帮助信息
+ * @file main.cpp
+ * @author guoqing (1337841346@qq.com)
+ * @brief 主文件
+ * @version 0.1
+ * @date 2019-01-07
  * 
- * @param[in] name argv[0]
- */
-void dispUsage(char* name);
-
-/**
- * @brief 使用背景减法来处理问题
- * 
- * @param[in] path 数据集路径
- */
-void backSubProc(char* path);
-
-/**
- * @brief 使用帧差法来解决问题
- * 
- * @param[in] path 数据集路径
+ * @copyright Copyright (c) 2019
  * 
  */
-void frameSubProc(char* path);
+
+#include "main.h"
 
 /**
  * @brief 主函数
@@ -128,6 +111,8 @@ void backSubProc(char* path)
 	}
 	
 
+	initWindowsPostion(reader.getFrameSize());
+
     //开始遍历视频序列中的所有帧
 	for (int i = 2; i < frameCount; i++)
 	{
@@ -135,7 +120,7 @@ void backSubProc(char* path)
 		{
 			//如果为真，那么说明读取成功,显示
 			cv::imshow("frame",frame);	
-			//cv::moveWindow("frame",100,100);
+	
 		}
 		else
 		{
@@ -147,7 +132,9 @@ void backSubProc(char* path)
 		result=detector.motionDetect(frame);
 		
 		imshow("result", result);
-		cv::moveWindow("frame",100,300);
+		
+
+		updateImgs(detector);
 		
 		if(i==2)
 		{
@@ -191,6 +178,7 @@ void frameSubProc(char* path)
 		//打开成功了
 		cout<<"打开成功，数据集的相关信息："<<endl;
 		cout<<"大小："<< reader.getFrameSize().height <<" x "<<reader.getFrameSize().width <<endl;
+		
 		cout<<"通道："<< reader.getFrameChannels()<<endl;
 		cout<<"长度："<< reader.getTotalFrames() <<endl;
 		cout<<"FPS: "<< reader.getFPS()<<endl;
@@ -214,6 +202,8 @@ void frameSubProc(char* path)
 	//存储结果的图像
 	cv::Mat result;
 
+	initWindowsPostion(reader.getFrameSize());
+
     //开始遍历视频序列中的所有帧
 	for (int i = 2; i < frameCount; i++)
 	{
@@ -221,7 +211,7 @@ void frameSubProc(char* path)
 		{
 			//如果为真，那么说明读取成功,显示
 			cv::imshow("frame",frame);	
-			//cv::moveWindow("frame",100,100);
+			
 		}
 		else
 		{
@@ -233,7 +223,7 @@ void frameSubProc(char* path)
 		result=detector.motionDetect(frame);
 		
 		imshow("result", result);
-		cv::moveWindow("frame",100,300);
+		
 		
 		if(i==2)
 		{
@@ -241,6 +231,8 @@ void frameSubProc(char* path)
 			cout<<"第一帧处理完成，暂停。调整好窗口后按任意键，继续."<<endl;
 			getchar();
 		}
+
+		updateImgs(detector);
 
 		//如果按下了ESC键那么就退出窗口
 		if (waitKey(1000.0/FPS) == 27)//按原FPS显示
@@ -263,4 +255,33 @@ void frameSubProc(char* path)
 	}//对视频中的所有帧进行遍历
 	
 	cout<<"处理完成。"<<endl;
+}
+
+void initWindowsPostion(cv::Size frameSize)
+{
+	imshow("frame",cv::Mat(frameSize,CV_8UC3,Scalar(0)));
+	cv::moveWindow("frame",50,50);
+
+	imshow("diff",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
+	cv::moveWindow("diff",50*2+frameSize.width,50);
+
+	imshow("diff_thr",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
+	cv::moveWindow("diff_thr",50*3+frameSize.width*2,50);
+
+	imshow("result",cv::Mat(frameSize,CV_8UC3,Scalar(0)));
+	cv::moveWindow("result",50,50*2+frameSize.height);
+
+	imshow("dilate",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
+	cv::moveWindow("dilate",50*2+frameSize.width,50*2+frameSize.height);
+
+	imshow("erode",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
+	cv::moveWindow("erode",50*3+frameSize.width*2,50*2+frameSize.height);	
+}
+
+void updateImgs(MotionDetector_DiffBase &detector)
+{
+	imshow("diff",detector.getImgDiff());
+	imshow("diff_thr",detector.getImgDiffThresh());
+	imshow("erode",detector.getImgErode());
+	imshow("dilate",detector.getImgDilate());
 }
