@@ -4,6 +4,7 @@
 #include "common.h"
 #include "DataReader.h"
 #include "MotionDetector.h"
+#include "MotionDetector_backsub.h"
 
 /**
  * @brief 显示程序的命令行帮助信息
@@ -78,14 +79,30 @@ int main(int argc,char* argv[])
 
 	cv::Mat lastFrame;	//上一帧的图像，这个在帧差法中被使用
 
+	
+	//设置背景图像
+	MotionDetector_backsub detector;
+
+	if(!(reader.getNewFrame(frame)))
+	{
+		cout<<"第一帧图像为空。取消。"<<endl;
+		return 0;
+	}
+	else
+	{
+		cout<<"第一帧图像读取成功，正在设置为背景模型"<<endl;
+		detector.setBackground(frame);
+	}
+	
+
     //开始遍历视频序列中的所有帧
-	for (int i = 1; i < frameCount; i++)
+	for (int i = 2; i < frameCount; i++)
 	{
 		if(reader.getNewFrame(frame))
 		{
 			//如果为真，那么说明读取成功,显示
 			cv::imshow("frame",frame);	
-			cv::moveWindow("frame",100,100);
+			//cv::moveWindow("frame",100,100);
 		}
 		else
 		{
@@ -105,6 +122,7 @@ int main(int argc,char* argv[])
         //调用MoveDetect()进行运动物体检测，返回值存入result，并且显示结果
 		//result = MotionDetector::back_sub(background, frame);
 
+		/*
 		if(i==1)
 		{
 			result = MotionDetector::back_sub(frame, frame);	
@@ -113,9 +131,13 @@ int main(int argc,char* argv[])
 		{
 			result = MotionDetector::back_sub(lastFrame, frame);
 		}
+		*/
+
+		
+		result=detector.motionDetect(frame);
 		
 
-		lastFrame=frame.clone();
+		//lastFrame=frame.clone();
 		
 		imshow("result", result);
 		cv::moveWindow("frame",100,300);

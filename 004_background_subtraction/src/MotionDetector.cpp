@@ -151,7 +151,7 @@ cv::Mat MotionDetector::back_sub(
 	drawContours(result,				//输出图像
 				 contours,				//要绘制的轮廓
 				 -1,					//绘制所有的轮廓
-				 Scalar(0, 0, 255),		//颜色为白色
+				 Scalar(0, 0, 255),		//颜色为红色
 				 2);					//线宽为2个像素，其他的参数均保持默认值
 
 	//7.查找正外接矩形

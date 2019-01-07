@@ -18,6 +18,8 @@ if(OPENCV_FOUND)
     src/main.cpp
     src/DataReader.cpp
     src/MotionDetector.cpp
+    src/MotionDetector_base.cpp
+    src/MotionDetector_backsub.cpp
     )
 
     target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
