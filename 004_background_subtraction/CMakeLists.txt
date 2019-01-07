@@ -17,6 +17,7 @@ if(OPENCV_FOUND)
     add_executable(${PROJECT_NAME}
     src/main.cpp
     src/DataReader.cpp
+    src/MotionDetector.cpp
     )
 
     target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
