@@ -89,16 +89,17 @@ cv::Mat MotionDetector::back_sub(
 		cv::Mat cv::getStructuringElement(int shape, Size esize, Point anchor = Point(-1, -1));
 	*/
 
-	Mat kernel_erode = getStructuringElement(MORPH_RECT, Size(3, 3));
-	Mat kernel_dilate = getStructuringElement(MORPH_RECT, Size(15, 15));
+	//Mat kernel_erode = getStructuringElement(MORPH_RECT, Size(3, 3));
+    Mat kernel_erode = getStructuringElement(MORPH_RECT, Size(1, 1));
+	//Mat kernel_dilate = getStructuringElement(MORPH_RECT, Size(15, 15));
+    Mat kernel_dilate = getStructuringElement(MORPH_RECT, Size(18, 18));
 	//看来腐蚀操作需要用到上面的这个东西
 	erode(diff_thresh, diff_thresh, kernel_erode);
 	imshow("erode", diff_thresh);
 
 	//5.膨胀
 	//膨胀操作也是一样
-	//TODO 检查一下图像处理中的腐蚀和膨胀操作究竟是怎么一回事
-	dilate(diff_thresh, diff_thresh, kernel_dilate);
+    dilate(diff_thresh, diff_thresh, kernel_dilate);
 	imshow("dilate", diff_thresh);
 
 	//6.查找轮廓并绘制轮廓
@@ -177,4 +178,11 @@ cv::Mat MotionDetector::back_sub(
 	}
 	
 	return result;//返回result图像
+}
+
+//帧差法
+static cv::Mat frame_sub(cv::Mat lastframe, cv::Mat frame)
+{
+    //其实和上面的背景减除法是完全相同的
+    return MotionDetector::back_sub(lastframe,frame);
 }

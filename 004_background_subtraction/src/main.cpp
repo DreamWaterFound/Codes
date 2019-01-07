@@ -6,6 +6,13 @@
 #include "MotionDetector.h"
 
 /**
+ * @brief 显示程序的命令行帮助信息
+ * 
+ * @param[in] name argv[0]
+ */
+void dispUsage(char* name);
+
+/**
  * @brief 主函数
  * 
  * @param[in] argc 参数个数
@@ -21,7 +28,8 @@ int main(int argc,char* argv[])
 	//参数检查,参数0 1-目录 2-模式
 	if(argc<2)
 	{
-		cout<<"[usage] "<<argv[0]<<" data_path [mode]"<<endl;
+		//显示使用信息
+		dispUsage(argv[0]);		
 		return 0;
 	}
 
@@ -43,6 +51,21 @@ int main(int argc,char* argv[])
 		return 0;
 	}
 
+	//获取参数
+	if(argc>2)
+	{
+		switch(argv[2][0]-'0')
+		{
+		case 0:
+			cout<<"background subtraction method selected."<<endl;
+			break;
+		case 1:
+			cout<<"frame subtraction method selected."<<endl;
+			break;
+		}
+	}
+	
+
     //获取总帧数
 	int frameCount = reader.getTotalFrames();
     //获取播放速率
@@ -53,13 +76,16 @@ int main(int argc,char* argv[])
 	cv::Mat background;//存储背景图像
 	cv::Mat result;//存储结果图像
 
+	cv::Mat lastFrame;	//上一帧的图像，这个在帧差法中被使用
+
     //开始遍历视频序列中的所有帧
 	for (int i = 1; i < frameCount; i++)
 	{
 		if(reader.getNewFrame(frame))
 		{
 			//如果为真，那么说明读取成功,显示
-			cv::imshow("frame",frame);			
+			cv::imshow("frame",frame);	
+			cv::moveWindow("frame",100,100);
 		}
 		else
 		{
@@ -67,17 +93,32 @@ int main(int argc,char* argv[])
 			continue;
 		}
 
-        //将第一帧作为背景图像        
+        //将第一帧作为背景图像    
+		/*    
 		if (i == 1)
 		{
 			background = frame.clone();
 		}
+		*/
 			
        
         //调用MoveDetect()进行运动物体检测，返回值存入result，并且显示结果
-		result = MotionDetector::back_sub(background, frame);
+		//result = MotionDetector::back_sub(background, frame);
+
+		if(i==1)
+		{
+			result = MotionDetector::back_sub(frame, frame);	
+		}
+		else
+		{
+			result = MotionDetector::back_sub(lastFrame, frame);
+		}
+		
+
+		lastFrame=frame.clone();
 		
 		imshow("result", result);
+		cv::moveWindow("frame",100,300);
 		
 
 		if(i==1)
@@ -111,3 +152,11 @@ int main(int argc,char* argv[])
 	return 0;
 }
 
+void dispUsage(char *name)
+{
+	cout<<"[usage] "<<name<<" data_path [mode]"<<endl;
+	cout<<"mode:"<<endl;
+	cout<<"\t0 - background subtraction"<<endl;
+	cout<<"\t1 - frame subtraction"<<endl;
+	
+}

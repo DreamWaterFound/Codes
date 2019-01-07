@@ -29,6 +29,15 @@ public:
      * @return cv::Mat          含有轮廓的外接矩形的检测结果结果
      */
     static cv::Mat back_sub(cv::Mat background, cv::Mat frame);
+    
+    /**
+     * @brief 帧差法来进行物体检测
+     * 
+     * @param[in] lastframe     上一帧图像
+     * @param[in] frame         当前帧图像
+     * @return cv::Mat          含有轮廓的外接矩形的检测结果结果
+     */
+    static cv::Mat frame_sub(cv::Mat lastframe, cv::Mat frame);
 
     
 };
