@@ -196,7 +196,8 @@ void frameSubProc(char* path)
 	
 	//设置背景图像
 	MotionDetector_3framesub detector;
-	//detector.setEropeKernelSize(2,3);
+	//HERE
+	//detector.setEropeKernelSize(2,2);
 
 	//用于存储当前帧图像
 	cv::Mat frame;

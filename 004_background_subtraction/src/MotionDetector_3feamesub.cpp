@@ -35,8 +35,12 @@ cv::Mat MotionDetector_3framesub::calcuDiffImg(cv::Mat frame)
         cv::cvtColor(frame,mmGrayFrame,CV_BGR2GRAY);
     }
 
-    //作差
-    cv::absdiff(mmGrayLastFrame2,mmGrayFrame,mmDiff);
+    //作差,这个才是标准的三帧作差的方法
+    cv::Mat diff1,diff2;
+    cv::absdiff(mmGrayLastFrame,mmGrayFrame,diff1);
+    cv::absdiff(mmGrayLastFrame2,mmGrayLastFrame,diff2);
+
+    mmDiff=diff1+diff2;
 
     return mmDiff;
 }
