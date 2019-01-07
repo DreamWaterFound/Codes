@@ -9,6 +9,9 @@
  * 
  */
 
+#ifndef __COMMON_H__
+#define __COMMON_H__
+
 //头文件引用部分
 
 #include "opencv2/opencv.hpp"
@@ -39,4 +42,4 @@ using namespace std;
  */
 #define SEQ_FPS 30
 
-
+#endif 

@@ -9,6 +9,9 @@
  * 
  */
 
+#ifndef __MOTION_DETECTOR_BASE_H__
+#define __MOTION_DETECTOR_BASE_H__
+
 #include "common.h"
 
 
@@ -98,3 +101,4 @@ private:
 
 
 };
+#endif

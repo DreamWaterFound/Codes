@@ -9,6 +9,9 @@
  * 
  */
 
+#ifndef __DATA_READER_H__
+#define __DATA_READER_H__
+
 #include "common.h"
 
 
@@ -138,3 +141,5 @@ private:
     ///帧的通道数
     int mnFrameChannels;
 };
+
+#endif

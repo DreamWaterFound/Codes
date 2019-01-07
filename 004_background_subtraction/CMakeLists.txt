@@ -21,6 +21,7 @@ if(OPENCV_FOUND)
     src/MotionDetector_base.cpp
     src/MotionDetector_DiffBase.cpp
     src/MotionDetector_backsub.cpp
+    src/MotionDetector_framesub.cpp
     )
 
     target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})

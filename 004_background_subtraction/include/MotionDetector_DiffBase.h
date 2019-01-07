@@ -1,3 +1,5 @@
+
+
 /**
  * @file MotionDetector_DiffBase.h
  * @author guoqing (1337841346@qq.com)
@@ -8,6 +10,9 @@
  * @copyright Copyright (c) 2019
  * 
  */
+
+#ifndef __MOTION_DETECTOR_DIFF_BASE_H__
+#define __MOTION_DETECTOR_DIFF_BASE_H__
 
 #include "common.h"
 
@@ -48,9 +53,16 @@ public:
      * 
      * @param[in] frame 当前帧
      * @return cv::Mat  运动目标检测结果
-     * @note 注意这里并不会进行图像尺寸的检查，请确保和背景模型一致
      */
-    virtual cv::Mat motionDetect(cv::Mat frame)=0;  
+    cv::Mat motionDetect(cv::Mat frame);  
+
+    /**
+     * @brief 获得差分图像，这个函数将在子类中被补充和完善
+     * 
+     * @param[in] frame     当前时刻的帧
+     * @return cv::Mat      计算得到的差分图像
+     */
+    virtual cv::Mat calcuDiffImg(cv::Mat frame)=0;
 
 public:
     //参数写入函数
@@ -282,3 +294,5 @@ protected:
     /** @} */
 
 };
+
+#endif

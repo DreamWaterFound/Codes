@@ -28,6 +28,65 @@ MotionDetector_DiffBase::~MotionDetector_DiffBase()
     }
 }
 
+//=============核心功能================
+//对当前帧进行运动目标检测
+cv::Mat MotionDetector_DiffBase::motionDetect(cv::Mat frame)
+{
+    //首先检查一下变量
+    if(mpvvContours)
+    {
+        delete mpvvContours;
+    }
+    if(mpvRectangles)
+    {
+        delete mpvRectangles;
+    }
+
+    /** 1. 得到差分图像 */
+    mmDiff=calcuDiffImg(frame);
+    
+    /** 2. 阈值化 */
+    cv::threshold(mmDiff,mmDiffThresh,
+        mnThreshold,MAX_INTENSITY,CV_THRESH_BINARY);
+
+    /** 3. 腐蚀 */
+    cv::erode(mmDiffThresh,mmErode,mmKernelErode);
+
+    /** 4. 膨胀 */
+    cv::dilate(mmErode,mmDilate,mmKernelDilate);
+
+    /** 5. 寻找并绘制轮廓 */
+    mpvvContours = new vector<vector<cv::Point> >;
+    cv::findContours(mmDilate,			    //输入的二值图像
+				 *mpvvContours,			//轮廓
+				 CV_RETR_EXTERNAL,		//仅仅提取最外层的轮廓
+				 CV_CHAIN_APPROX_NONE);	//并且存储所有的轮廓点
+
+    mmContours=frame.clone();
+    cv::drawContours(mmContours,			//输出图像
+				 *mpvvContours,			//要绘制的轮廓
+				 -1,					//绘制所有的轮廓
+				 mContourColor,		    //颜色
+				 mnContourLineWidth);   //线宽
+
+    /** 6. 计算并绘制外接矩形 */
+    mpvRectangles=new vector<Rect>(mpvvContours->size());
+    mmResult=mmContours.clone();
+    //开始遍历
+    for(int i=0;i<mpvvContours->size();i++)
+    {
+        //计算
+        (*mpvRectangles)[i] = cv::boundingRect((*mpvvContours)[i]);
+        //绘制
+        cv::rectangle(mmResult, 			//输出图像为最终的结果图像
+				  (*mpvRectangles)[i], 		//当前遍历到的轮廓的外接矩形
+				  mRectColor, 	        //颜色
+				  mnRectangleLineWidth);//线宽
+    }
+
+    return mmResult;
+
+}
 
 //================参数设置====================
 void MotionDetector_DiffBase::resetDetector_base(void)

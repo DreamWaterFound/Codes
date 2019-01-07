@@ -9,6 +9,9 @@
  * 
  */
 
+#ifndef __MOTION_DETECTOR_BACKSUB_H__
+#define __MOTION_DETECTOR_BACKSUB_H__
+
 #include "common.h"
 #include "MotionDetector_DiffBase.h"
 
@@ -32,14 +35,14 @@ public:
     ~MotionDetector_backsub();
 
 public:
+    
     /**
-     * @brief 对当前帧进行运动目标检测
+     * @brief 计算和背景模型的差分图像
      * 
-     * @param[in] frame 当前帧
-     * @return cv::Mat  运动目标检测结果
-     * @note 注意这里并不会进行图像尺寸的检查，请确保和背景模型一致
+     * @param[in] frame     当前帧
+     * @return cv::Mat  差分图像
      */
-    cv::Mat motionDetect(cv::Mat frame);
+    cv::Mat calcuDiffImg(cv::Mat frame);
 
     /**
      * @brief Set the Background 
@@ -75,15 +78,10 @@ public:
 private:
     //私有成员变量
 
-    /** 
-     * @name 图像类
-     * @{
-     */
-
     ///背景模型图像
     cv::Mat mmBackground;    
     ///灰度的背景模型图像
     cv::Mat mmGrayBackground;
-    /** @} */
 
 };
+#endif
