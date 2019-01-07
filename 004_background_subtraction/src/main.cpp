@@ -166,7 +166,7 @@ void backSubProc(char* path)
 	cout<<"处理完成。"<<endl;
 }
 
-//使用背景减法来处理
+//使用帧差法来处理
 void frameSubProc(char* path)
 {
 	DataReader reader;
@@ -195,7 +195,8 @@ void frameSubProc(char* path)
 	double FPS = reader.getFPS();
 	
 	//设置背景图像
-	MotionDetector_framesub detector;
+	MotionDetector_3framesub detector;
+	//detector.setEropeKernelSize(2,3);
 
 	//用于存储当前帧图像
 	cv::Mat frame;
@@ -260,22 +261,22 @@ void frameSubProc(char* path)
 void initWindowsPostion(cv::Size frameSize)
 {
 	imshow("frame",cv::Mat(frameSize,CV_8UC3,Scalar(0)));
-	cv::moveWindow("frame",50,50);
+	cv::moveWindow("frame",50,100);
 
 	imshow("diff",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
-	cv::moveWindow("diff",50*2+frameSize.width,50);
+	cv::moveWindow("diff",50*2+frameSize.width,100);
 
 	imshow("diff_thr",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
-	cv::moveWindow("diff_thr",50*3+frameSize.width*2,50);
+	cv::moveWindow("diff_thr",50*3+frameSize.width*2,100);
 
 	imshow("result",cv::Mat(frameSize,CV_8UC3,Scalar(0)));
-	cv::moveWindow("result",50,50*2+frameSize.height);
+	cv::moveWindow("result",50,150+frameSize.height);
 
 	imshow("dilate",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
-	cv::moveWindow("dilate",50*2+frameSize.width,50*2+frameSize.height);
+	cv::moveWindow("dilate",50*2+frameSize.width,150+frameSize.height);
 
 	imshow("erode",cv::Mat(frameSize,CV_8UC1,Scalar(0)));
-	cv::moveWindow("erode",50*3+frameSize.width*2,50*2+frameSize.height);	
+	cv::moveWindow("erode",50*3+frameSize.width*2,150+frameSize.height);	
 }
 
 void updateImgs(MotionDetector_DiffBase &detector)

@@ -38,7 +38,7 @@ public:
  * @param[in] frame     当前帧
  * @return cv::Mat      差分图像
  */
-    cv::Mat calcuDiffImg(cv::Mat frame);
+    virtual cv::Mat calcuDiffImg(cv::Mat frame);
 
 public:
     //参数写入函数
@@ -47,7 +47,7 @@ public:
      * @brief 重设所有参数、清空所有图像缓存
      * @details 清空图像缓存不是删除图片而是设置全黑的图片
      */
-    void resetDetector(void);
+    virtual void resetDetector(void);
 
 public:
     // 参数读出函数
@@ -57,7 +57,7 @@ public:
         return mmGrayLastFrame;
     }     
 
-private:
+protected:
     //私有成员变量
 
 

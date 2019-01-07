@@ -18,6 +18,7 @@
 #include "DataReader.h"
 #include "MotionDetector_backsub.h"
 #include "MotionDetector_framesub.h"
+#include "MotionDetector_3framesub.h"
 
 /**
  * @brief 显示程序的命令行帮助信息
