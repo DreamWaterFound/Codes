@@ -45,7 +45,7 @@ void onDilateCallBack(int position,void* userdata) {
     dilateSize = position;
     dilate_element = getStructuringElement(MORPH_RECT, Size(dilateSize, dilateSize));
     dilate(source, dilate_result, dilate_element);
-    //HACK
+    //在这里添加这一句是为了在膨胀图像之后也能够更新腐蚀图像
     onErodeCallBack(erodeSize, (void*)erodeBar);
     //显示处理之后的图像
     imshow(dilate_window, dilate_result);
