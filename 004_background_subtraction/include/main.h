@@ -19,6 +19,7 @@
 #include "MotionDetector_backsub.h"
 #include "MotionDetector_framesub.h"
 #include "MotionDetector_3framesub.h"
+#include "MotionDetector_GMM.h"
 
 /**
  * @brief 显示程序的命令行帮助信息
@@ -55,6 +56,8 @@ void initWindowsPostion(cv::Size frameSize);
  * @param detector 
  */
 void updateImgs(MotionDetector_DiffBase &detector);
+
+void GMMProc(char *path);
 
 
 #endif //__MAIN_H__

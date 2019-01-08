@@ -47,6 +47,13 @@ int main(int argc,char* argv[])
 			cout<<"frame subtraction method selected."<<endl;
 			frameSubProc(argv[1]);
 			break;
+		case 2:
+			cout<<"GMM method selected."<<endl;
+			GMMProc(argv[1]);
+			break;
+		default:
+			cout<<"No match case."<<endl;
+			break;
 		}
 	}
 	
@@ -155,7 +162,7 @@ void backSubProc(char* path)
 		{
 			cout<<"Frame: "<<i<<" / "<<frameCount;
 			cout.setf(ios::fixed);
-			cout<<ios::fixed<<setprecision(2)
+			cout<<setprecision(2)
 				<<"\t"<<(100.0*i/(float)frameCount)
 				<<" %"<<endl;
 			cout<<setprecision(6);
@@ -196,7 +203,6 @@ void frameSubProc(char* path)
 	
 	//设置背景图像
 	MotionDetector_3framesub detector;
-	//HERE
 	//detector.setEropeKernelSize(2,2);
 
 	//用于存储当前帧图像
@@ -248,7 +254,7 @@ void frameSubProc(char* path)
 		{
 			cout<<"Frame: "<<i<<" / "<<frameCount;
 			cout.setf(ios::fixed);
-			cout<<ios::fixed<<setprecision(2)
+			cout<<setprecision(2)
 				<<"\t"<<(100.0*i/(float)frameCount)
 				<<" %"<<endl;
 			cout<<setprecision(6);
@@ -286,4 +292,97 @@ void updateImgs(MotionDetector_DiffBase &detector)
 	imshow("diff_thr",detector.getImgDiffThresh());
 	imshow("erode",detector.getImgErode());
 	imshow("dilate",detector.getImgDilate());
+}
+
+
+//使用帧差法来处理
+void GMMProc(char* path)
+{
+	DataReader reader;
+
+	cout<<"数据库的路径为："<<path<<endl;
+	cout<<"正在尝试打开数据库..."<<endl;
+	if(reader.openSeq(path))
+	{
+		//打开成功了
+		cout<<"打开成功，数据集的相关信息："<<endl;
+		cout<<"大小："<< reader.getFrameSize().height <<" x "<<reader.getFrameSize().width <<endl;
+		
+		cout<<"通道："<< reader.getFrameChannels()<<endl;
+		cout<<"长度："<< reader.getTotalFrames() <<endl;
+		cout<<"FPS: "<< reader.getFPS()<<endl;
+	}
+	else
+	{
+		cout<<"打开失败。"<<endl;
+		return ;
+	}
+
+	//获取总帧数
+	int frameCount = reader.getTotalFrames();
+    //获取播放速率
+	double FPS = reader.getFPS();
+	
+	//设置背景图像
+	MotionDetector_GMM detector;
+	//detector.setEropeKernelSize(5,5);
+	//detector.setBinaryThreshold(220);
+
+	//用于存储当前帧图像
+	cv::Mat frame;
+	//存储结果的图像
+	cv::Mat result;
+
+	initWindowsPostion(reader.getFrameSize());
+
+    //开始遍历视频序列中的所有帧
+	for (int i = 2; i < frameCount; i++)
+	{
+		if(reader.getNewFrame(frame))
+		{
+			//如果为真，那么说明读取成功,显示
+			cv::imshow("frame",frame);	
+			
+		}
+		else
+		{
+			//读取不成功？跳过
+			continue;
+		}
+
+		//进行运动检测
+		result=detector.motionDetect(frame);
+		
+		imshow("result", result);
+		
+		updateImgs(detector);
+		
+		if(i==2)
+		{
+			//输出一些调试信息
+			cout<<"第一帧处理完成，暂停。调整好窗口后按任意键，继续."<<endl;
+			getchar();
+		}
+
+		//如果按下了ESC键那么就退出窗口
+		if (waitKey(1000.0/FPS) == 27)//按原FPS显示
+		{
+			cout << "ESC退出!" << endl;
+			break;
+		}
+
+		//输出进度
+		if(i%100==0)
+		{
+			cout<<"Frame: "<<i<<" / "<<frameCount;
+			cout.setf(ios::fixed);
+			cout<<setprecision(2)
+				<<"\t"<<(100.0*i/(float)frameCount)
+				<<" %"<<endl;
+			cout<<setprecision(6);
+		}
+		
+	}//对视频中的所有帧进行遍历
+	
+	cout<<"处理完成。"<<endl;
 }
