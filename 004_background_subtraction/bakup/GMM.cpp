@@ -78,7 +78,6 @@ void processVideo(string videoFilename)
         //通过上面的操作，最终得到了一个完整的显示id的字符串
         string frameNumberString = ss.str();
         // 左上角显示帧号
-        //TODO  查看一下这个函数的定义
         putText(frame,                  //输出的图像
             frameNumberString.c_str(),  //要绘制的文本
             cv::Point(15, 15),          //字符串在图像上的左下角的坐标

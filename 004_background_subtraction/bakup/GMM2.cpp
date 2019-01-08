@@ -30,23 +30,25 @@ Mat w[GMM_MAX_COMPONT];
 Mat u[GMM_MAX_COMPONT];
 //每个高斯模型的协方差矩阵
 Mat sigma[GMM_MAX_COMPONT];
-//TODO ??
-Mat fit_num,gmask,foreground;
-//TODO ???
+
+Mat fit_num,        //表示某个像素最适用的高斯模型的数目(因为排序后后面的几个高斯模型不一定适用)
+    gmask,          //背景掩摸
+    foreground;     //前景掩摸,但是实际上并没有怎么被用到
+//作者为了输出视频来使用的,用于存储RGB三个通道上的掩摸图像++原始图像和
 vector<Mat> output_m;
 //输出图像
 Mat output_img;
 
-//存储临时计算的权值和方差，可是 TODO 为什么是浮点数？
+//存储临时计算的权值和方差，在高斯分布排序的时候,用于临时存储权值和方差的时候用到的
 float temp_w,temp_sigma;
-//临时计算得到的均值
+//同上
 unsigned char temp_u;
-//TODO  循环变量？
+//疑似循环变量,但是实际在文件中好像没有怎么看到用到它
 int i=-1;
 
 
 //For connected components:
-//TODO 目测是和连通轮廓运算相关的两个变量
+//目测是和连通轮廓运算相关的两个变量,在作者自己写的轮廓连通函数中使用到了;但是可能出于其他考虑,作者还是使用了opencv提供的库函数
 int CVCONTOUR_APPROX_LEVEL = 2;   // Approx.threshold - the bigger it is, the simpler is the boundary
 int CVCLOSE_ITR = 1;        
 
@@ -96,9 +98,9 @@ int main(int argc, const char* argv[])
 
     gmm_init(
         img_gray);  //刚刚灰度化的第一帧图像
-    //TODO 不知道是干嘛的
+    //每个像素最适用的高斯分布的个数
     fit_num=Mat(img.size(),CV_8UC1,-1);//初始化为1
-    //TODO 不知道是干嘛的，感觉看上去比较想掩摸？
+    //背景掩摸
     gmask=Mat(img.size(),CV_8UC1,-1);
     foreground=img.clone();
     split(img,output_m);
@@ -230,7 +232,6 @@ void gmm_init(Mat img)
 //    output_m[1]=Mat(img.size(),CV_8UC1,0);
 //    output_m[2]=Mat(img.size(),CV_8UC1,0);
 //所以作者把这几个放到了main函数中
-//TODO 这里又三帧图像，是说RGB三个通道吗？
 }
 
 /**
@@ -278,7 +279,7 @@ void gmm_train(Mat img)
         {
             //对于每一个像素
 
-            //TODO ???
+            //循环变量
             int k=0;
             //当前像素对于所有高斯模型的匹配失败数
             int nfit=0;
@@ -383,7 +384,7 @@ void gmm_train(Mat img)
                         sigma[h].at<float>(m,n)=15.0;//the opencv library code is 15.0
                         
                         //从最开始的分布到当前这个分布之间的这些个分布,我们都要重新设置他们的权值
-                        //TODO 为什么?
+                        //原因的话,应该是觉得重设这些分布的权值就足够了吧...
                         for(int q=0;q<GMM_MAX_COMPONT && q!=h;q++)
                         {
                             /****update the other unfit's weight,u and sigma remain unchanged****/
