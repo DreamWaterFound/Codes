@@ -23,6 +23,6 @@ cv::Mat MotionDetector_GMM::calcuDiffImg(cv::Mat frame)
 void MotionDetector_GMM::resetDetector(void)
 {
     //创建背景建模类
-    mpMOG2=cv::createBackgroundSubtractorMOG2();
+    mpMOG2=cv::createBackgroundSubtractorMOG2(200,16,false);
     resetDetector_base();
 }

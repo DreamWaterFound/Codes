@@ -357,12 +357,14 @@ void GMMProc(char* path)
 		
 		updateImgs(detector);
 		
+		/*
 		if(i==2)
 		{
 			//输出一些调试信息
 			cout<<"第一帧处理完成，暂停。调整好窗口后按任意键，继续."<<endl;
 			getchar();
 		}
+		*/
 
 		//如果按下了ESC键那么就退出窗口
 		if (waitKey(1000.0/FPS) == 27)//按原FPS显示

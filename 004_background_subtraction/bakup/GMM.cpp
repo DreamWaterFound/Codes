@@ -79,8 +79,12 @@ void processVideo(string videoFilename)
         string frameNumberString = ss.str();
         // 左上角显示帧号
         //TODO  查看一下这个函数的定义
-        putText(frame, frameNumberString.c_str(), cv::Point(15, 15),
-            FONT_HERSHEY_SIMPLEX, 0.5 , cv::Scalar(0,0,0));
+        putText(frame,                  //输出的图像
+            frameNumberString.c_str(),  //要绘制的文本
+            cv::Point(15, 15),          //字符串在图像上的左下角的坐标
+            FONT_HERSHEY_SIMPLEX,       //字体
+            0.5 ,                       //在字体指定大小的基础上，字体缩放的系数
+            cv::Scalar(0,0,0));         //绘制颜色（白色）
         // 输出结果
         //原始图像
         imshow("Frame", frame); 
