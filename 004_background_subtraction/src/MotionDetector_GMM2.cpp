@@ -29,13 +29,16 @@ MotionDetector_GMM2::~MotionDetector_GMM2()
 
 cv::Mat MotionDetector_GMM2::calcuDiffImg(cv::Mat frame)
 {
+    cvtColor(frame, frame, CV_BGR2GRAY);
+    
+    
     //根据当前的帧计数来选择不同的操作
     mnFrameCnt++;
     
     if(mnFrameCnt==1)
     {
         //对第一帧执行特殊的初始化操作
-        gmmInit();
+        gmmInit(frame);
         gmmDealFirstFrame(frame);
     }
     else if(mnFrameCnt<=mnLearnFrameNumber)
@@ -77,13 +80,13 @@ void MotionDetector_GMM2::gmmInit(cv::Mat img)
 {
     for(int i=0;i<GMM_MAX_COMPONT;i++)
     {
-        mmWeight[i]=cv::Mat(img.size(),CV_32FC1,0.0);
-        mmU[i]=cv::Mat(img.size(),CV_8UC1,-1);
-        mmSigma[i]=cv::Mat(img.size(),CV_32FC1,0.0);
+        mmWeight[i]=cv::Mat(img.rows,img.cols,CV_32FC1,0.0);
+        mmU[i]=cv::Mat(img.rows,img.cols,CV_8UC1,-1);
+        mmSigma[i]=cv::Mat(img.rows,img.cols,CV_32FC1,0.0);
     }
 
-    mmFitNum=cv::Mat::zeros(img.size(),CV_8UC1);
-    mmGMMMask=cv::Mat::zeros(img.size(),CV_8UC1);
+    mmFitNum=cv::Mat::zeros(img.rows,img.cols,CV_8UC1);
+    mmGMMMask=cv::Mat::zeros(img.rows,img.cols,CV_8UC1);
 }
 
 //GMM处理第一帧
@@ -250,6 +253,66 @@ void MotionDetector_GMM2::gmmTrain(cv::Mat img)
             }//遍历这个像素下的每个高斯模型
         }//见下
     }//遍历图像中的每一个像素
+}
+
+//根据当前帧确定每个像素最适合使用的高斯模型是多少个
+void MotionDetector_GMM2::gmmCalFitNum(cv::Mat img)
+{
+    //开始遍历图像中的每一个像素
+    for(int x=0;x<img.rows;x++)
+    {
+        for(int y=0;y<img.cols;y++)
+        {
+            /** 对于图像中的每一个像素的每一个高斯模型: */
+
+            float sum=0.0f;
+            for(unsigned char a=0;a<GMM_MAX_COMPONT;a++)
+            {
+                /** 累加这个高斯模型的权值 */
+                sum+=W(a,x,y);
+                /** 如果发现累加到当前的高斯分布的时候,权值的累加和已经达到或者超过预定的阈值了 */
+                if(sum>=DEFALUT_GMM_THRESHOD_SUMW)
+                {
+                    /** 那么就说说明使用这些个高斯分布就已经足够了 */
+                    //下面的a+1是因为在循环中的a是从0开始的
+                    mmFitNum.at<unsigned char>(x,y)=a+1;
+                    break;
+                }//查看是否已经超过预定的阈值
+            }//遍历这个像素的每个高斯分布
+        }//见下
+    }//遍历图像中的每一个像素
+}
+
+//根据输入的图像进行测试
+void MotionDetector_GMM2::gmmTest(cv::Mat img)
+{
+    //还是遍历所有的图像像素
+    for(int x=0;x<img.rows;x++)
+    {
+        for(int y=0;y<img.cols;y++)
+        {
+            /** 对于所有的图像像素,都只选择那几个最有效的模型进行计算 */
+            //之所以这个初始化写在这里是因为在循环完成之后还是要用到
+            unsigned char a=0;
+            for(;a<mmFitNum.at<unsigned char>(x,y);a++)
+            {
+                if(abs(IMG(x,y)-U(a,x,y)) < 
+                    (unsigned char)(2.5*(Sigma(a,x,y))))
+                {
+                    //到这里就可以得到判断,只要和其中的一个高斯分布的方差比较接近,那么就可以认为是背景
+                    mmGMMMask.at<unsigned char>(x,y)=1;
+                    break;
+                }//判断是否是背景
+            }//遍历所有的有效模型
+
+            //如果上述都不是,那么就可以认为当前的这个像素是前景
+            if(a==mmFitNum.at<unsigned char>(x,y))
+            {
+                mmGMMMask.at<unsigned char>(x,y)=255;
+            }
+
+        }//见下
+    }//遍历所有的图像像素
 }
 
 

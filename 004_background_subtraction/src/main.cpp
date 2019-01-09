@@ -324,7 +324,7 @@ void GMMProc(char* path)
 	double FPS = reader.getFPS();
 	
 	//设置背景图像
-	MotionDetector_GMM detector;
+	MotionDetector_GMM2 detector;
 	//detector.setEropeKernelSize(5,5);
 	//detector.setBinaryThreshold(220);
 

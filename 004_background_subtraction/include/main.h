@@ -20,6 +20,7 @@
 #include "MotionDetector_framesub.h"
 #include "MotionDetector_3framesub.h"
 #include "MotionDetector_GMM.h"
+#include "MotionDetector_GMM2.h"
 
 /**
  * @brief 显示程序的命令行帮助信息

@@ -23,19 +23,19 @@ using namespace cv;
 
 
 /** @brief GMM模型的最多数目,这个数值是定死的,不能够在运行时改变 */
-#define GMM_MAX_COMPONT 6
+#define GMM_MAX_COMPONT 2
 //学习速率
 #define DEFAULT_GMM_LEARN_ALPHA 0.005    //该学习率越大的话，学习速度太快，效果不好
 //阈值
 #define DEFALUT_GMM_THRESHOD_SUMW 0.7    //如果取值太大了的话，则更多部分都被检测出来了
 //学习帧数
-#define DEFAULT_END_FRAME 200
+#define DEFAULT_END_FRAME 20
 
 
 //几个用来加速操作的宏
 #define W(index,x,y) (mmWeight[index].at<float>(x,y))
-#define U(index,x,y) (mmU[0].at<unsigned char>(x,y))
-#define Sigma(index,x,y) (mmSigma[0].at<float>(x,y))
+#define U(index,x,y) (mmU[index].at<unsigned char>(x,y))
+#define Sigma(index,x,y) (mmSigma[index].at<float>(x,y))
 #define IMG(x,y) (img.at<unsigned char>(x,y))
 
 
