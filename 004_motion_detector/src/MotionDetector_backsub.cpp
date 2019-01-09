@@ -19,6 +19,16 @@ MotionDetector_backsub::~MotionDetector_backsub()
 //获得差分图像
 cv::Mat MotionDetector_backsub::calcuDiffImg(cv::Mat frame)
 {
+    //查看是否设置了背景模型图像
+    if(!isBackgroundSet)
+    {
+        //如果没有设置
+        isBackgroundSet=true;
+        //不管返回值了
+        setBackground(frame);
+    }
+    
+
     cvtColor(frame, mmGrayFrame, CV_BGR2GRAY);
     absdiff(mmGrayFrame, mmGrayBackground, mmDiff);
     return mmDiff;
@@ -47,5 +57,7 @@ void MotionDetector_backsub::resetDetector(void)
     
     mmBackground=cv::Mat(mFrameSize,CV_8UC3,Scalar(0,0,0));
     mmGrayBackground=cv::Mat(mFrameSize,CV_8UC1,Scalar(0));
+    isBackgroundSet=false;
+
     resetDetector_base();
 }

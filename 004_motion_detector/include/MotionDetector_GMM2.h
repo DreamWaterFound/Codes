@@ -31,7 +31,7 @@ using namespace cv;
 //学习帧数
 #define DEFAULT_END_FRAME 20
 
-
+         
 //几个用来加速操作的宏
 #define W(index,x,y) (mmWeight[index].at<float>(x,y))
 #define U(index,x,y) (mmU[index].at<unsigned char>(x,y))

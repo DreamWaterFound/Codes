@@ -20,7 +20,7 @@
  */
 int main(int argc,char* argv[])
 {
-	
+	char *path=argv[1];
 
 	cout<<"程序开始运行。"<<endl;
 
@@ -32,48 +32,8 @@ int main(int argc,char* argv[])
 		return 0;
 	}
 
-	
+	// 1.检查参数1_数据集路径
 
-	//获取参数
-	if(argc>2)
-	{
-		switch(argv[2][0]-'0')
-		{
-		case 0:
-			cout<<"background subtraction method selected."<<endl;
-			backSubProc(argv[1]);
-			break;
-		case 1:
-			cout<<"frame subtraction method selected."<<endl;
-			frameSubProc(argv[1]);
-			break;
-		case 2:
-			cout<<"GMM method selected."<<endl;
-			GMMProc(argv[1]);
-			break;
-		default:
-			cout<<"No match case."<<endl;
-			break;
-		}
-	}
-	
-
-    
-	return 0;
-}
-
-void dispUsage(char *name)
-{
-	cout<<"[usage] "<<name<<" data_path [mode]"<<endl;
-	cout<<"mode:"<<endl;
-	cout<<"\t0 - background subtraction"<<endl;
-	cout<<"\t1 - frame subtraction"<<endl;
-	
-}
-
-//使用背景减法来处理
-void backSubProc(char* path)
-{
 	DataReader reader;
 
 	cout<<"数据库的路径为："<<path<<endl;
@@ -89,8 +49,8 @@ void backSubProc(char* path)
 	}
 	else
 	{
-		cout<<"打开失败。"<<endl;
-		return ;
+		cout<<"\e[1;31m打开失败。\e[0m"<<endl;
+		return 0;
 	}
 
 	//获取总帧数
@@ -98,8 +58,39 @@ void backSubProc(char* path)
     //获取播放速率
 	double FPS = reader.getFPS();
 	
-	//设置背景图像
-	MotionDetector_backsub detector;
+	// 2. 检查参数2
+	MotionDetector_DiffBase *detector;
+
+	switch(argv[2][0]-'0')
+	{
+		case 0:
+			cout<<"\e[1;33m background subtraction method selected.\e[0m"<<endl;
+			detector=new MotionDetector_backsub();
+			break;
+		case 1:
+			cout<<"\e[1;33m frame subtraction method selected.\e[0m"<<endl;
+			detector=new MotionDetector_framesub();
+			break;
+		case 2:
+			cout<<"\e[1;33m 3-frame subtraction method selected.\e[0m"<<endl;
+			detector=new MotionDetector_3framesub();
+			break;
+		case 3:
+			cout<<"\e[1;33m self-coded GMM method selected.\e[0m"<<endl;
+			detector=new MotionDetector_GMM2();
+			break;
+		case 4:
+			cout<<"\e[1;33m opencv GMM method selected.\e[0m"<<endl;
+			detector=new MotionDetector_GMM();
+			break;
+		default:
+			cout<<"\e[1;35m No match case. \e[0m"<<endl;
+			dispUsage(argv[0]);		
+			return 0;
+	}
+
+
+	//准备开始
 
 	//用于存储当前帧图像
 	cv::Mat frame;
@@ -108,14 +99,10 @@ void backSubProc(char* path)
 
 	if(!(reader.getNewFrame(frame)))
 	{
-		cout<<"第一帧图像为空。取消。"<<endl;
-		return ;
+		cout<<"\e[1;33m 第一帧图像为空。取消。\e[0m"<<endl;
+		return 0;
 	}
-	else
-	{
-		cout<<"第一帧图像读取成功，正在设置为背景模型"<<endl;
-		detector.setBackground(frame);
-	}
+	
 	
 
 	initWindowsPostion(reader.getFrameSize());
@@ -136,19 +123,14 @@ void backSubProc(char* path)
 		}
 
 		//进行运动检测
-		result=detector.motionDetect(frame);
+		result=detector->motionDetect(frame);
 		
 		imshow("result", result);
 		
 
-		updateImgs(detector);
+		updateImgs(*detector);
 		
-		if(i==2)
-		{
-			//输出一些调试信息
-			cout<<"第一帧处理完成，暂停。调整好窗口后按任意键，继续."<<endl;
-			getchar();
-		}
+
 
 		//如果按下了ESC键那么就退出窗口
 		if (waitKey(1000.0/FPS) == 27)//按原FPS显示
@@ -171,6 +153,35 @@ void backSubProc(char* path)
 	}//对视频中的所有帧进行遍历
 	
 	cout<<"处理完成。"<<endl;
+
+	
+
+    
+	return 0;
+}
+
+void dispUsage(char *name)
+{
+	cout<<"\e[1;32m [usage] "<<name<<" data_path [mode] \e[0m"<<endl;
+	cout<<"mode:"<<endl;
+	cout<<"\t0 - background subtraction"<<endl;
+	cout<<"\t1 - frame subtraction"<<endl;
+	cout<<"\t2 - 3-frames subtraction"<<endl;
+	cout<<"\t3 - self-code GMM method"<<endl;
+	cout<<"\t4 - opencv GMM method"<<endl;
+	
+}
+
+/*
+//使用背景减法来处理
+void backSubProc(char* path)
+{
+	
+	
+	//设置背景图像
+	MotionDetector_backsub detector;
+
+	
 }
 
 //使用帧差法来处理
@@ -264,7 +275,7 @@ void frameSubProc(char* path)
 	
 	cout<<"处理完成。"<<endl;
 }
-
+*/
 void initWindowsPostion(cv::Size frameSize)
 {
 	imshow("frame",cv::Mat(frameSize,CV_8UC3,Scalar(0)));
@@ -295,6 +306,7 @@ void updateImgs(MotionDetector_DiffBase &detector)
 }
 
 
+/*
 //使用帧差法来处理
 void GMMProc(char* path)
 {
@@ -357,14 +369,7 @@ void GMMProc(char* path)
 		
 		updateImgs(detector);
 		
-		/*
-		if(i==2)
-		{
-			//输出一些调试信息
-			cout<<"第一帧处理完成，暂停。调整好窗口后按任意键，继续."<<endl;
-			getchar();
-		}
-		*/
+
 
 		//如果按下了ESC键那么就退出窗口
 		if (waitKey(1000.0/FPS) == 27)//按原FPS显示
@@ -388,3 +393,5 @@ void GMMProc(char* path)
 	
 	cout<<"处理完成。"<<endl;
 }
+
+*/

@@ -44,14 +44,6 @@ public:
      */
     cv::Mat calcuDiffImg(cv::Mat frame);
 
-    /**
-     * @brief Set the Background 
-     * 
-     * @param[in] background 背景图片
-     * @return true     设置成功
-     * @return false    设置失败，一般是因为图片为空
-     */
-    bool setBackground(cv::Mat background);
 
 public:
     //参数写入函数
@@ -76,12 +68,25 @@ public:
     }
 
 private:
+
+/**
+     * @brief Set the Background 
+     * 
+     * @param[in] background 背景图片
+     * @return true     设置成功
+     * @return false    设置失败，一般是因为图片为空
+     */
+    bool setBackground(cv::Mat background);
+
+private:
     //私有成员变量
 
     ///背景模型图像
     cv::Mat mmBackground;    
     ///灰度的背景模型图像
     cv::Mat mmGrayBackground;
+    ///是否设置过了背景图像
+    bool isBackgroundSet;
 
 };
 #endif
