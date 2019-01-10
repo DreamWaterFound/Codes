@@ -30,21 +30,6 @@
 void dispUsage(char* name);
 
 /**
- * @brief 使用背景减法来处理问题
- * 
- * @param[in] path 数据集路径
- */
-void backSubProc(char* path);
-
-/**
- * @brief 使用帧差法来解决问题
- * 
- * @param[in] path 数据集路径
- * 
- */
-void frameSubProc(char* path);
-
-/**
  * @brief 初始化窗口的位置
  * 
  * @param frameSize 帧大小
@@ -57,8 +42,5 @@ void initWindowsPostion(cv::Size frameSize);
  * @param detector 
  */
 void updateImgs(MotionDetector_DiffBase &detector);
-
-void GMMProc(char *path);
-
 
 #endif //__MAIN_H__

@@ -20,11 +20,11 @@
 
   使用google的开源日志库glog来实现强大的日志记录功能。经过测试居然能够记录产生日志的代码的位置，并且在产生FATAL日志类型时还能够自动停止程序运行，感觉很强大（也可能是我没有见识= =）
 
-- 004_motion_detector
+- [004_motion_detector](https://github.com/DreamWaterFound/Codes/tree/master/004_motion_detector)
 
   使用几种传统的运动检测算法,对CDW-2014数据集进行前景运动物体检测的尝试.
 
-- 005_erode_and_dilate
+- [005_erode_and_dilate](https://github.com/DreamWaterFound/Codes/tree/master/005_erode_and_dilate)
 
   对图像进行形态学腐蚀和膨胀的实验.
 
