@@ -1,0 +1,1 @@
+./bin/Gauss_Filter ./img/test_pic.jpg
