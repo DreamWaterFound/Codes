@@ -25,19 +25,19 @@ int main(int argc,char *argv[])
     Mat img=imread(argv[1]);
     if(img.empty())
     {
-        cout<<"Img "<<argv[1]<<" is empty!"<<endl;
+        cout<<"Img "<<argv[1]<<" is0empty!"<<endl;
         return 0;
     }
     Mat grayImg;
-    cvtColor(img,grayImg,CV_BGR2GRAY);
+    //cvtColor(img,grayImg,CV_BGR2GRAY);
 
     Mat img2;
-    GaussianBlur(grayImg,img2,Size(5,5),0.8,0.8);
-    imshow("Origin Image",grayImg);
+    GaussianBlur(img,img2,Size(0,5),0.8,0.8);
+    imshow("Origin Image",img);
     imshow("OpenCV Guassian Blur",img2);
 
     Mat img3;
-    selfGaussianBlur(grayImg,img3,Size(5,5),0.8);
+    selfGaussianBlur(img,img3,Size(5,5),0.8);
     imshow("Self Guassian Blur",img3);
 
     waitKey(0);
@@ -140,6 +140,37 @@ bool selfGaussianBlur(const Mat src, Mat& dst,const Size ksize,const double sigm
 
                 dst.at<unsigned char>(y-border_width.height,x-border_width.width)=sum[0];
             }                   
+            else
+            {
+                for(int m=-border_width.width;m<border_width.width;m++)
+                {   
+                    for(int n=-border_width.height;n<border_width.height;n++)
+                    {
+                        Vec3b rgb = bimg.at<Vec3b>(y+n,x+m);
+                        auto t=tmp.at<double>(border_width.height+n,border_width.width+m);
+                        sum[0] +=  t*rgb[0];
+                        sum[1] +=  t*rgb[1];
+                        sum[2] +=  t*rgb[2];
+                    }
+                }    
+
+                if(sum[0]<0)    sum[0]=0;
+                if(sum[0]>255) sum[0]=255;
+
+                if(sum[1]<0)    sum[1]=0;
+                if(sum[1]>255) sum[1]=255;
+
+                if(sum[2]<0)    sum[2]=0;
+                if(sum[2]>255) sum[2]=255;
+
+                Vec3b rgb={static_cast<uchar>(sum[0]),
+                           static_cast<uchar>(sum[1]),
+                           static_cast<uchar>(sum[2])};
+                dst.at<Vec3b>(y-border_width.height,x-border_width.width)=rgb;
+                
+                
+            }
+            
         }
     }
 
