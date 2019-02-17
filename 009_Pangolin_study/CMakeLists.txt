@@ -35,3 +35,17 @@ target_link_libraries(04_SharedMemoryCamera ${Pangolin_LIBRARIES})
 
 add_executable(05_SimpleDisplay src/05_SimpleDisplay.cpp)
 target_link_libraries(05_SimpleDisplay ${Pangolin_LIBRARIES})
+
+add_executable(06_SimpleDisplayImage src/06_SimpleDisplayImage.cpp)
+target_link_libraries(06_SimpleDisplayImage ${Pangolin_LIBRARIES})
+
+add_executable(07_SimpleMultiDisplay src/07_SimpleMultiDisplay.cpp)
+target_link_libraries(07_SimpleMultiDisplay ${Pangolin_LIBRARIES})
+
+
+## ========================= SELF TESTS ==============================
+add_executable(test1 test/test1.cpp)
+target_link_libraries(test1 ${Pangolin_LIBRARIES})
+
+add_executable(test2 test/test2.cpp)
+target_link_libraries(test2 ${Pangolin_LIBRARIES})

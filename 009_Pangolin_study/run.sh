@@ -1,1 +1,1 @@
-./bin/05_SimpleDisplay
+./bin/07_SimpleMultiDisplay

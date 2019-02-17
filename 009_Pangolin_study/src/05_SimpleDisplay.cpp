@@ -80,32 +80,34 @@ int main(/*int argc, char* argv[]*/)
   pangolin::Var<int> an_int("ui.An_Int",2,4,5);   //同上
   pangolin::Var<double> a_double_log(
     "ui.Log_scale var",           //句柄和名称
-    3,                            //开始运行时的初始值
-    1E3,                            //上限
+    500,                            //开始运行时的初始值
+    1E2,                            //上限
     1E4,                          //下限
-    false);                        // ????
+    false);                        //是否使用对数表示
   pangolin::Var<bool> a_checkbox("ui.A_Checkbox",false,true);   //同上
-  pangolin::Var<int> an_int_no_input("ui.An_Int_No_Input",2);
-  pangolin::Var<CustomType> any_type("ui.Some_Type", CustomType(0,1.2f,"Hello") );
+  pangolin::Var<int> an_int_no_input("ui.An_Int_No_Input",2);   //如果什么都不加的话，那么就无法通过鼠标来控制它
+  pangolin::Var<CustomType> any_type("ui.Some_Type", CustomType(0,1.2f,"Hello") );  //显示其他的数据类型，但是要求这个数据类型要能够像上面一样定义流输入和流输出函数
 
+  //定义具有两个特殊功能的按钮
   pangolin::Var<bool> save_window("ui.Save_Window",false,false);
   pangolin::Var<bool> save_cube("ui.Save_Cube",false,false);
-
   pangolin::Var<bool> record_cube("ui.Record_Cube",false,false);
 
   // std::function objects can be used for Var's too. These work great with C++11 closures.
   //详细资料可以看这里: https://blog.csdn.net/janeqi1987/article/details/87181517
   //支持这个其实真的是一个不错的特性
-  pangolin::Var<std::function<void(void)> > reset("ui.Reset", SampleMethod);
+  pangolin::Var<std::function<void(void)> > reset("ui.Reset", SampleMethod);    //自定义按钮的响应函数
 
   // Demonstration of how we can register a keyboard hook to alter a Var
   //这里的功能就是按一下按键就会修改成为指定的数值
+  //快捷键的响应,以及相关显示数值的修改
   pangolin::RegisterKeyPressCallback(pangolin::PANGO_CTRL + 'b', pangolin::SetVarFunctor<double>("ui.A_Double", 3.5));
-
+  //快捷键的响应,并且可以触发一个自定义的函数
   // Demonstration of how we can register a keyboard hook to trigger a method
   pangolin::RegisterKeyPressCallback(pangolin::PANGO_CTRL + 'r', SampleMethod);
 
   // Default hooks for exiting (Esc) and fullscreen (tab).
+  //NOTICE 这里默认是绑定了上面的两个按键
   while( !pangolin::ShouldQuit() )
   {
     // Clear entire screen
@@ -141,7 +143,7 @@ int main(/*int argc, char* argv[]*/)
     d_cam.Activate(s_cam);
 
     // Render some stuff
-    //TODO
+    //TODO 目前还不知道这个是做什么的
     glColor3f(1.0,1.0,1.0);
     pangolin::glDrawColouredCube();
 
