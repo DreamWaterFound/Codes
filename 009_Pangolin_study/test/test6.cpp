@@ -191,7 +191,11 @@ void run(void)
     .SetHandler(new pangolin::Handler3D(s_cam));
 
     pangolin::CreatePanel("ui")
-      .SetBounds(0.0, 1.0, 0.0, pangolin::Attach::Pix(UI_WIDTH));
+      .SetBounds(
+          0.0, 
+          pangolin::Attach::Pix(UI_WIDTH), 
+          0.0, 
+          pangolin::Attach::Pix(UI_WIDTH));
 
     //接下来要开始准备添加控制选项了
     pangolin::Var<double> axisSize("ui.axis_size",5,1,20);
@@ -212,8 +216,13 @@ void run(void)
     // =====================  图像窗口 ====================
     
     pangolin::View& d_image = pangolin::Display("image")
-      .SetBounds(2/3.0f,1.0f,0,1/3.0f,640.0/480)
-      .SetLock(pangolin::LockLeft, pangolin::LockTop);
+      .SetBounds(
+          pangolin::Attach::Pix(300),
+          pangolin::Attach::Pix(200),
+          0.0,
+          1.0,
+          640.0/480)
+      .SetLock(pangolin::LockRight, pangolin::LockTop);
 
     d_cam.AddDisplay(d_image);
     
@@ -233,7 +242,7 @@ void run(void)
         d_cam.Activate(s_cam);
 
         //改变背景颜色
-        glClearColor(1.0,1.0,1.0,0.0);
+        glClearColor(0.3,0.3,0.3,0.0);
 
         //按钮的响应 - 复位视图
         if(pangolin::Pushed(resetViewBtn))

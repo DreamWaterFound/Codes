@@ -6,7 +6,9 @@
                 "${workspaceFolder}/**",
                 "/home/guoqing/libraries/Pangolin_030/include/",
                 "/home/guoqing/libraries/Pangolin_030/include",
-                "/home/guoqing/libraries/eigen_333/include/eigen3"
+                "/home/guoqing/libraries/eigen_333/include/eigen3",
+                "/home/guoqing/libraries/opencv_331/include",
+                "/home/guoqing/libraries/opencv_331/include/opencv"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -19,6 +19,11 @@ find_package(Pangolin REQUIRED)
 message("-- ==> Found Pangolin ${Pangolin_VERSION} in ${Pangolin_INCLUDE_DIRS}")
 include_directories(${Pangolin_INCLUDE_DIRS})
 
+
+find_package(OpenCV 3 REQUIRED)
+message("-- ==> Found OpenCV ${OpenCV_VERSION} in ${OpenCV_INCLUDE_DIRS}")
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 add_executable(00_project_test src/00_project_test.cpp)
 
 add_executable(01_HelloPangolin src/01_HelloPangolin.cpp)
@@ -79,4 +84,7 @@ add_executable(test6 test/test6.cpp)
 target_link_libraries(test6 ${Pangolin_LIBRARIES})
 
 add_executable(test7 test/test7.cpp)
-target_link_libraries(test7 ${Pangolin_LIBRARIES})
+target_link_libraries(test7 ${Pangolin_LIBRARIES} ${OpenCV_LIBS})
+
+add_executable(test8 test/test8.cpp)
+target_link_libraries(test8 ${Pangolin_LIBRARIES} ${OpenCV_LIBS})

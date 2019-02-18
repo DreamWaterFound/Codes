@@ -1,4 +1,4 @@
-//通过panel控制img_view的参数,进而找到setBounds几个参数的意义
+//尝试显示两个图片
 #include <pangolin/pangolin.h>
 #include <vector>
 #include <iostream>
@@ -15,7 +15,7 @@
 using namespace std;
 using namespace cv;
 
-static const std::string window_name = "SetBounds Test";
+static const std::string window_name = "Two images test";
 
 typedef struct __Pose
 {
@@ -184,6 +184,7 @@ void run(void)
     // fetch the context and bind it to this thread
 
     Mat img=imread("../img/pic.jpg");
+    Mat img2=imread("../img/test_pic.jpg");
     if(img.empty())
     {
         cout<<"Image is empty. Terminated."<<endl;
@@ -246,20 +247,34 @@ void run(void)
     
     pangolin::View& d_image = pangolin::Display("image")
       .SetBounds(
-          pangolin::Attach::Pix(300),
-          pangolin::Attach::Pix(200),
-          0.0,
-          1.0,
+          pangolin::Attach::Pix(0),
+          pangolin::Attach::Pix(114),
+          pangolin::Attach::Pix(396),
+          pangolin::Attach::Pix(640),
           640.0/480)
-      .SetLock(pangolin::LockRight, pangolin::LockTop);
+      .SetLock(pangolin::LockCenter , pangolin::LockCenter);
 
     d_cam.AddDisplay(d_image);
-    
-    
 
-    unsigned char* imageArray = new unsigned char[3*img.cols*img.rows];
+    unsigned char* imageArray= new unsigned char[3*img.cols*img.rows];
     pangolin::GlTexture imageTexture(img.cols,img.rows,GL_RGB,false,0,GL_RGB,GL_UNSIGNED_BYTE);
 
+    
+    pangolin::View& d_image2 = pangolin::Display("image2")
+      .SetBounds(
+          0,
+          0.2381,
+          0.375,
+          1.0,
+          640.0/480)
+      .SetLock(pangolin::LockCenter, pangolin::LockCenter);
+
+    d_cam.AddDisplay(d_image2);
+
+    unsigned char* imageArray2= new unsigned char[3*img2.cols*img2.rows];
+    pangolin::GlTexture imageTexture2(img2.cols,img2.rows,GL_RGB,false,0,GL_RGB,GL_UNSIGNED_BYTE);
+
+    
 
     while( !pangolin::ShouldQuit() )
     {
@@ -272,6 +287,7 @@ void run(void)
         //改变背景颜色
         glClearColor(0.3,0.3,0.3,0.0);
 
+        /*
         if(checkRatio)
         {
             d_image.SetBounds(
@@ -289,18 +305,34 @@ void run(void)
                 pangolin::Attach::Pix((int)varRight));
 
         }
-        
-        
-
-
+    
+        d_image2.SetBounds(
+                (double)vardTop,
+                (double)vardBottom,
+                (double)vardLeft,
+                (double)vardRight);
+                
+        */
         //Set some random image data and upload to GPU
         setImageData(imageArray,img);
         imageTexture.Upload(imageArray,GL_RGB,GL_UNSIGNED_BYTE);
 
+    
+        //Set some random image data and upload to GPU
+        setImageData(imageArray2,img2);
+        imageTexture2.Upload(imageArray2,GL_RGB,GL_UNSIGNED_BYTE);
+    
         //display the image
         d_image.Activate();
         glColor3f(1.0,1.0,1.0);
         imageTexture.RenderToViewport();
+
+   
+        //display the image
+        d_image2.Activate();
+        glColor3f(1.0,1.0,1.0);
+        imageTexture2.RenderToViewport();
+   
 
         // Swap frames and Process Events
         pangolin::FinishFrame();
