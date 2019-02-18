@@ -49,3 +49,12 @@ target_link_libraries(test1 ${Pangolin_LIBRARIES})
 
 add_executable(test2 test/test2.cpp)
 target_link_libraries(test2 ${Pangolin_LIBRARIES})
+
+add_executable(test3 test/test3.cpp)
+target_link_libraries(test3 ${Pangolin_LIBRARIES})
+
+add_executable(test4 test/test4.cpp)
+target_link_libraries(test4 ${Pangolin_LIBRARIES})
+
+add_executable(test5 test/test5.cpp)
+target_link_libraries(test5 ${Pangolin_LIBRARIES})
