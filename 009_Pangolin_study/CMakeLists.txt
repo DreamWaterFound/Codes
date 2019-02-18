@@ -42,6 +42,22 @@ target_link_libraries(06_SimpleDisplayImage ${Pangolin_LIBRARIES})
 add_executable(07_SimpleMultiDisplay src/07_SimpleMultiDisplay.cpp)
 target_link_libraries(07_SimpleMultiDisplay ${Pangolin_LIBRARIES})
 
+add_executable(08_SimplePlot src/08_SimplePlot.cpp)
+target_link_libraries(08_SimplePlot ${Pangolin_LIBRARIES})
+
+add_executable(09_SimpleRecord src/09_SimpleRecord.cpp)
+target_link_libraries(09_SimpleRecord ${Pangolin_LIBRARIES})
+
+add_executable(10_SimpleScene src/10_SimpleScene.cpp)
+target_link_libraries(10_SimpleScene ${Pangolin_LIBRARIES})
+
+add_executable(11_SimpleVideo src/11_SimpleVideo.cpp)
+target_link_libraries(11_SimpleVideo ${Pangolin_LIBRARIES})
+
+# 需要使用cuda，但是本机目前没有这个环境
+# add_executable(12_VBODisplay src/12_VBODisplay.cpp)
+# target_link_libraries(12_VBODisplay ${Pangolin_LIBRARIES})
+
 
 ## ========================= SELF TESTS ==============================
 add_executable(test1 test/test1.cpp)
@@ -58,3 +74,9 @@ target_link_libraries(test4 ${Pangolin_LIBRARIES})
 
 add_executable(test5 test/test5.cpp)
 target_link_libraries(test5 ${Pangolin_LIBRARIES})
+
+add_executable(test6 test/test6.cpp)
+target_link_libraries(test6 ${Pangolin_LIBRARIES})
+
+add_executable(test7 test/test7.cpp)
+target_link_libraries(test7 ${Pangolin_LIBRARIES})

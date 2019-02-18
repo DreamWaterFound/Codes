@@ -52,7 +52,7 @@ int main(/*int argc, char* argv[]*/)
     pangolin::ModelViewLookAt(-0,0.5,-3, 0,0,0, pangolin::AxisY)
   );
 
-  //TODO 侧边栏的宽度?
+  //侧边栏的宽度
   const int UI_WIDTH = 180;
 
   // Add named OpenGL viewport to window and provide 3D Handler
