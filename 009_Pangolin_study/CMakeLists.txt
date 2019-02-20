@@ -88,3 +88,6 @@ target_link_libraries(test7 ${Pangolin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(test8 test/test8.cpp)
 target_link_libraries(test8 ${Pangolin_LIBRARIES} ${OpenCV_LIBS})
+
+add_executable(test9 test/test9.cpp)
+target_link_libraries(test9 ${Pangolin_LIBRARIES} ${OpenCV_LIBS})

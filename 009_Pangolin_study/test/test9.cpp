@@ -1,4 +1,4 @@
-//这个应该是最有用的DEMO!
+//尝试在 05_SimpleDisplay 的基础上禁用全屏快捷键
 
 #include <iostream>
 #include <pangolin/pangolin.h>
@@ -32,6 +32,11 @@ std::istream& operator>> (std::istream& is, CustomType& o){
 void SampleMethod()
 {
     std::cout << "You typed ctrl-r or pushed reset" << std::endl;
+}
+
+void NonFullScreen(void)
+{
+  return ;
 }
 
 
@@ -105,6 +110,8 @@ int main(/*int argc, char* argv[]*/)
   //快捷键的响应,并且可以触发一个自定义的函数
   // Demonstration of how we can register a keyboard hook to trigger a method
   pangolin::RegisterKeyPressCallback(pangolin::PANGO_CTRL + 'r', SampleMethod);
+
+  pangolin::RegisterKeyPressCallback('\t', NonFullScreen);
 
   // Default hooks for exiting (Esc) and fullscreen (tab).
   //NOTICE 这里默认是绑定了上面的两个按键
