@@ -1,0 +1,14 @@
+%YAML:1.0
+
+# 用于测试的YAML文件
+
+test_num_a: 666
+
+test_float: 1.235
+
+#貌似不能够直接读取这种类型的数据，看来还是需要使用整型作为中间类型来使用
+test_bool: true
+
+test_str: This is a test text.
+
+test_vec: [1,2,23333]
