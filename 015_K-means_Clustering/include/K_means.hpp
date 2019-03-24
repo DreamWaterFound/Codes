@@ -10,7 +10,7 @@
 class K_MeansCluster
 {
 public:
-    K_MeansCluster(size_t K,size_t N,double err,std::vector<SampleType> vSamples);
+    K_MeansCluster(size_t K,size_t N,size_t height, size_t width,double err,std::vector<SampleType> vSamples);
     ~K_MeansCluster();
 
     //获取结果的函数
@@ -24,6 +24,8 @@ public:
     //获取样本
     inline std::vector<SampleType> getSamples(void)
     { return mvSamples; }
+
+    void draw(size_t t);
     
 
 
@@ -36,7 +38,10 @@ private:
     bool computeCenter(void);
 
     // 两个样本点的距离描述函数
-    double computeSamplesDistance(Samples& s1,Samples& s2);
+    double computeSamplesDistance(SampleType s1,SampleType s2);
+
+    //用于辅助绘图
+    size_t mnHeight,mnWidth;
 
 private:
     ///聚类个数
@@ -58,8 +63,8 @@ private:
 
 //======================== 下面是功能实现 ==============================
 
-K_MeansCluster::K_MeansCluster(size_t K,size_t N,double err,std::vector<SampleType> vSamples)
-    :mnK(K),mnN(N),mdErr(err),mvSamples(vSamples),mbIsFailed(false)
+K_MeansCluster::K_MeansCluster(size_t K,size_t N,size_t height, size_t width,double err,std::vector<SampleType> vSamples)
+    :mnK(K),mnN(N),mdErr(err),mvSamples(vSamples),mbIsFailed(false),mnHeight(height),mnWidth(width)
 {
     //当被构造的时候,执行聚类操作
 
@@ -69,6 +74,27 @@ K_MeansCluster::K_MeansCluster(size_t K,size_t N,double err,std::vector<SampleTy
         mbIsFailed=true;
         return ;
     }
+
+    //准备绘制
+    draw(0);
+
+    for(int i=0;i<mnN;i++)
+    {
+
+        std::cout<<"it "<<i+1<<std::endl;
+
+        classified();
+
+        draw(0);
+
+        computeCenter();
+
+        draw(0);
+    }
+
+    std::cout<<"Complete."<<std::endl;
+    draw(0);
+    
 
 }
 
@@ -116,9 +142,117 @@ bool K_MeansCluster::getRandomMeans(void)
     return true;
 }
 
+void K_MeansCluster::draw(size_t t)
+{
+    using namespace cv;
+    using namespace std;
+
+    Mat img(mnHeight,mnWidth,CV_8UC3,Scalar(200,200,200));
+
+    for(auto sample : mvSamples)
+    {
+        if(sample.cluster_id==0)
+            circle(img,Point(sample.x,sample.y),3,Scalar(0,0,255),-1);
+        else if(sample.cluster_id==1)
+            circle(img,Point(sample.x,sample.y),3,Scalar(0,255,0),-1);
+        else
+            circle(img,Point(sample.x,sample.y),3,Scalar(0,0,0),-1);
+    }
+
+    size_t size=12;
+    for(auto center : mvCenters)
+    {
+        line(img,Point(center.x-size/2,center.y),Point(center.x+size/2,center.y),Scalar(0,0,0),2);
+        line(img,Point(center.x,center.y-size/2),Point(center.x,center.y+size/2),Scalar(0,0,0),2);
+    }
+
+    imshow("K-means",img);
+    waitKey(t);
+
+}
 
 
+void K_MeansCluster::classified(void)
+{
+    // 遍历每个样本点
+    size_t n=mvSamples.size();
+    size_t m=mvCenters.size();
+    for(int i=0;i<n;i++)
+    {
+        double min_dis=65536;
+        size_t min_class;
 
+        //遍历每个类
+        for(int j=0;j<m;j++)
+        {
+            //计算到这个类的中心的距离
+            double distance=computeSamplesDistance(mvSamples[i],mvCenters[j]);
+            //更新最大值
+            if(distance<min_dis)
+            {
+                //更新
+                min_dis=distance;
+                min_class=j;
+            }         
+        }
+
+        //遍历完成了,距离最小的类别将会被判定
+        mvSamples[i].cluster_id=min_class;
+    }
+}
+
+double K_MeansCluster::computeSamplesDistance(SampleType s1,SampleType s2)
+{
+    //return sqrt((s1.x-s2.x)*(s1.x-s2.x)+(s1.y-s2.y)*(s1.y-s2.y));
+    return (double)((s1.x-s2.x)*(s1.x-s2.x)+(s1.y-s2.y)*(s1.y-s2.y));
+}
+
+bool K_MeansCluster::computeCenter(void)
+{
+    using namespace std;
+
+    //暂时存储每个类的点的加和
+    vector<SampleType> sum;
+    sum.clear();
+    for(int i=0;i<mvCenters.size();i++)
+    {
+        SampleType s(0,0);
+        s.cluster_id=0; //在这里这个量用于计数
+        sum.push_back(s);
+    }
+    
+    // //初始化sum
+    // for(auto s:sum)
+    // {
+    //     s.x=0;s.y=0;
+    //     s.cluster_id=0;
+    // }
+
+    //开始遍历每个点
+    for(auto sample:mvSamples)
+    {
+        sum[sample.cluster_id].x+=sample.x;
+        sum[sample.cluster_id].y+=sample.y;
+        sum[sample.cluster_id].cluster_id++;
+
+    }
+
+    //然后取均值,更新到对应的center中
+    for(int i=0;i<mvCenters.size();i++)
+    {
+        mvCenters[i].x=ceil((sum[i].x*1.0f)/sum[i].cluster_id);
+        mvCenters[i].y=ceil((sum[i].y*1.0f)/sum[i].cluster_id);
+    }
+
+    //完事,现在先返回true
+    return true;
+
+    
+
+
+    
+
+}
 
 
 

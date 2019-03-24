@@ -39,6 +39,12 @@ public:
     // 查看一下样本
     bool seeSamples(void);
 
+    inline size_t getRangeHeight(void)
+    { return mnHeight; }
+
+    inline size_t getRangeWidth(void)
+    { return mnWidth; }
+
 public:
     
 

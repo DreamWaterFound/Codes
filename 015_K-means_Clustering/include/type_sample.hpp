@@ -3,11 +3,11 @@
 
 typedef struct _SampleType
 {
-    int x;
-    int y;
+    long x;
+    long y;
     int cluster_id;
 
-    _SampleType(int _x,int _y):x(_x),y(_y){;}
+    _SampleType(long _x,long _y):x(_x),y(_y){;}
 
 }SampleType;
 
