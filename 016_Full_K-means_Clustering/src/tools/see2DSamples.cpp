@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     }
 
     cout<<"Opening file "<<argv[1]<<endl;
-    Samples sample;
+    Samples2D sample;
     vector<Points_2D> res=sample.getSamples(string(argv[1]));
     if(res.size())
     {

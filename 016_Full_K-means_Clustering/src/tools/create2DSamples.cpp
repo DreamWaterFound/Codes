@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     ss=stringstream(argv[2]);
     ss>>width;
 
-    Samples sample;
+    Samples2D sample;
 
     cout<<"Click the image to set sample points. When you are ready, press ESC or just close the window. Waiting ... ";
     sample.getSamples(height,width);

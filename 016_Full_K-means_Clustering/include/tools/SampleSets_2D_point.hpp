@@ -23,12 +23,12 @@ void onMouse(int event,int x,int y,int flags,void *ustc)
 
 }
 
-class Samples
+class Samples2D
 {
 public:
-    Samples(void);
+    Samples2D(void);
 
-    ~Samples(void);
+    ~Samples2D(void);
 
     // 从图像中获得样本
     std::vector<Points_2D> getSamples(size_t height,size_t width);
@@ -60,18 +60,18 @@ private:
 
 };
 
-Samples::Samples(void)
+Samples2D::Samples2D(void)
     :mbIsReaded(false)
 {
        mSamples.clear();
 }
 
-Samples::~Samples(void)
+Samples2D::~Samples2D(void)
 {
     ;
 }
 
-std::vector<Points_2D> Samples::getSamples(size_t height,size_t width)
+std::vector<Points_2D> Samples2D::getSamples(size_t height,size_t width)
 {
     using namespace std;
     using namespace cv;
@@ -111,7 +111,7 @@ std::vector<Points_2D> Samples::getSamples(size_t height,size_t width)
     
 }
 
-bool Samples::seeSamples(void)
+bool Samples2D::seeSamples(void)
 {
     using namespace cv;
     using namespace std;
@@ -132,7 +132,7 @@ bool Samples::seeSamples(void)
     return 0;
 }
 
-bool Samples::saveSamples(std::string fileName)
+bool Samples2D::saveSamples(std::string fileName)
 {
     using namespace std;
 
@@ -155,7 +155,7 @@ bool Samples::saveSamples(std::string fileName)
     return true;
 }
 
-std::vector<Points_2D> Samples::getSamples(std::string fileName)
+std::vector<Points_2D> Samples2D::getSamples(std::string fileName)
 {
     using namespace std;
 
@@ -188,15 +188,7 @@ std::vector<Points_2D> Samples::getSamples(std::string fileName)
 
 
     return mSamples;
-
-
 }
-
-
-
-
-
-
 
 
 #endif //__SAMPLE_SETS_2D_POINT_HPP__
