@@ -23,7 +23,7 @@ public:
 protected:
 
     // 两个样本点的距离描述函数
-    double ComputeSamplesDistance(RGB_PIXEL s1,RGB_PIXEL s2);
+    virtual double ComputeSamplesDistance(RGB_PIXEL s1,RGB_PIXEL s2);
     // 获得一个空样本
     RGB_PIXEL GetZeroSample(void);
     // 两个样本的相加操作
@@ -31,7 +31,7 @@ protected:
     // 样本的取平均操作
     RGB_PIXEL DevideSample(RGB_PIXEL s, size_t n);
 
-private:
+protected:
     size_t mnHeight,mnWidth;
     std::vector<cv::Vec3b> mvColor;
 };

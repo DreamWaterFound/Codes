@@ -24,15 +24,14 @@ list(APPEND LINK_LIBS ${OpenCV_LIBS})
 
 # ============ demos ==================
 
-add_executable(demo_k_mean_2D_points
-    ${PROJECT_SOURCE_DIR}/src/demos/demo_k_mean_2D_points.cpp
-)
+add_executable(demo_k_mean_2D_points    ${PROJECT_SOURCE_DIR}/src/demos/demo_k_mean_2D_points.cpp)
 target_link_libraries(demo_k_mean_2D_points ${OpenCV_LIBS})
 
-add_executable(demo_k_mean_RGB_pic
-    ${PROJECT_SOURCE_DIR}/src/demos/demo_k_mean_RGB_pic.cpp
-)
+add_executable(demo_k_mean_RGB_pic    ${PROJECT_SOURCE_DIR}/src/demos/demo_k_mean_RGB_pic.cpp)
 target_link_libraries(demo_k_mean_RGB_pic ${OpenCV_LIBS})
+
+add_executable(demo_k_mean_RGB_uv_pic    ${PROJECT_SOURCE_DIR}/src/demos/demo_k_mean_RGB_uv_pic.cpp)
+target_link_libraries(demo_k_mean_RGB_uv_pic ${OpenCV_LIBS})
 
 # ============= tools =================
 add_executable(create2DSamples
