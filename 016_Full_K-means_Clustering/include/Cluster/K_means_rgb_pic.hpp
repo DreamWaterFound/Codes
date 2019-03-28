@@ -5,10 +5,11 @@
 
 #include "include/Cluster/K_means_base.hpp"
 #include "include/types/type_rgb_pixel.hpp"
+#include "include/tools/drawData.hpp"
 
 #include <opencv2/opencv.hpp>
 
-class K_Means_RGB : public K_Means_Base<RGB_PIXEL>
+class K_Means_RGB : public K_Means_Base<RGB_PIXEL>, public DrawData
 {
 public:
     K_Means_RGB(size_t clusterNum, size_t itNum, double epson, size_t nHeight, size_t nWitdh, std::vector<RGB_PIXEL> vSamples);
@@ -32,15 +33,27 @@ protected:
 
 private:
     size_t mnHeight,mnWidth;
-    //std::vector<cv::Vec> mvColor;
+    std::vector<cv::Vec3b> mvColor;
 };
 
 // ====================== 下面是函数的实现 =========================
 K_Means_RGB::K_Means_RGB(size_t clusterNum, size_t itNum, double epson, size_t nHeight, size_t nWitdh, std::vector<RGB_PIXEL> vSamples)
-    :K_Means_Base<RGB_PIXEL>(clusterNum,itNum,epson,vSamples),mnHeight(nHeight),mnWidth(nWitdh)
+    :K_Means_Base<RGB_PIXEL>(clusterNum,itNum,epson,vSamples),mnHeight(nHeight),mnWidth(nWitdh),DrawData()
 {
-    ;
-    //mvColor
+    //生成颜色配置
+    //大概计算一下,TODO  要求clusterNum别太大
+    // size_t n=255/clusterNum;
+    // for(int i=0;i<clusterNum;i++)
+    // {
+    //     mvColor.push_back(cv::Vec3b(i*n,i*n,i*n));    
+    // }
+
+    size_t n=255*6/clusterNum;
+    for(int i=0;i<clusterNum;i++)
+    {
+        mvColor.push_back(mvHueCircle[i*n]);    
+    }
+    
 }
 
 K_Means_RGB::~K_Means_RGB()
@@ -94,6 +107,7 @@ void K_Means_RGB::draw(size_t waitTimeMs)
     using namespace cv;
 
     Mat img(mnHeight,mnWidth,CV_8UC3);
+    Mat img2(mnHeight,mnWidth,CV_8UC3);
 
     for(int i=0;i<mnHeight;i++)
     {
@@ -102,10 +116,12 @@ void K_Means_RGB::draw(size_t waitTimeMs)
             //img.at<cv::Vec>(j,i)=mvColor[mvLabels[j+i*mnWidth]];
             RGB_PIXEL p=mvCenters[mvLabels[j+i*mnWidth]];
             img.at<cv::Vec3b>(i,j)=cv::Vec3b(p.b,p.g,p.r);
+            img2.at<cv::Vec3b>(i,j)=mvColor[mvLabels[j+i*mnWidth]];
         }
     }
 
-    imshow("res",img);
+    imshow("res, ",img);
+    imshow("res2, ",img2);
     waitKey(waitTimeMs);
 
 }
