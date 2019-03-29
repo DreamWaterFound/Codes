@@ -123,7 +123,7 @@ bool K_Means_Base<SampleType>::GetRandomMeans(void)
         size_t nCenterID=std::rand()%(n);
 
         //检查对应的id的样本点是否被使用过
-        
+        //对于深度图还要检查其深度值是否有效
         while(isUsed[nCenterID]==true)
         {
             //如果被使用过那么就重新生成
