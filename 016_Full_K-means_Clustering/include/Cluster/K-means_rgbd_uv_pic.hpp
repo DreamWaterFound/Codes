@@ -80,10 +80,14 @@ double K_Means_RGBD_UV::ComputeSamplesDistance(RGBD_PIXEL s1,RGBD_PIXEL s2)
         // 以及，在目前的基础上，使用“聚类图像金字塔”，使用上层图像知道下层图像的聚类操作？
         // 类似拓展思想：使用MaskRCNN这种预测特别小的图像（图像金字塔顶层的图像）来提供分类的指导依据（目的是提高实时性），然后在下面几层通过几何的方式逐步恢复聚类效果？
 
+        //此外，让深度梯度变化更大的区域更可能作为聚类的边界，这个怎么做？
+        // 以及尝试在彩色图像进行高斯模糊处理？
+        // 以及将每个类的mask提取出来，对其进行形态学的腐蚀和膨胀操作？
+
 
 
         //使用三个差组成向量的均方根作为误差的度量
-        return sqrt(0*dist_rgb+4*dist_pos+1.5*dist_depth);
+        return sqrt(0.5*dist_rgb+4*dist_pos+1.5*dist_depth);
     }
 
 RGBD_PIXEL K_Means_RGBD_UV::GetZeroSample(void)
@@ -144,7 +148,7 @@ void K_Means_RGBD_UV::draw(size_t waitTimeMs)
        uint16_t u=mvSamples[i].u;
        uint16_t v=mvSamples[i].v;
        
-        img.at<cv::Vec3b>(v,u)=cv::Vec3b(p.b,p.g,p.r);
+       // img.at<cv::Vec3b>(v,u)=cv::Vec3b(p.b,p.g,p.r);
     //  img.at<cv::Vec3b>(v,u)=cv::Vec3b(255,255,255);
        img2.at<cv::Vec3b>(v,u)=mvColor[mvLabels[i]];
 

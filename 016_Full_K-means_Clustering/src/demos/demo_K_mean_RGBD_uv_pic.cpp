@@ -53,6 +53,11 @@ int main(int argc, char* argv[])
     size_t row=srcRGBImg.rows;
     size_t col=srcRGBImg.cols;
 
+    //对深度图像进行高斯模糊
+    Mat srcBlurDepthImg;
+    GaussianBlur(srcDepthImg, srcBlurDepthImg, Size(5, 5), 3, 3);
+    imshow("Bulr Depth Image",srcBlurDepthImg);
+
     
     vector<RGBD_PIXEL> vPixels;
     //构造样本数据
@@ -60,16 +65,19 @@ int main(int argc, char* argv[])
     {
         for(int j=0;j<col;j++)
         {
-            if(srcRGBImg.at<uint16_t>(i,j)==0)
+            if(srcDepthImg.at<uint16_t>(i,j)==0)
                 continue ;  //深度值不合法
+            else{
             cv::Vec3b color=srcRGBImg.at<cv::Vec3b>(i,j);
             vPixels.push_back(RGBD_PIXEL(j,i,
                 color[2],color[1],color[0],
-                srcDepthImg.at<uint16_t>(i,j)
+                srcBlurDepthImg.at<uint16_t>(i,j)
             ));
+            }
         }
     }
 
+    cout<<"vPixels.size() = "<<vPixels.size()<<endl;
     K_Means_RGBD_UV cluster(K,N,0.1,row,col,vPixels);
     cluster.Compute();
 
