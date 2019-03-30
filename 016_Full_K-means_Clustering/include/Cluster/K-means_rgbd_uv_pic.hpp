@@ -83,7 +83,7 @@ double K_Means_RGBD_UV::ComputeSamplesDistance(RGBD_PIXEL s1,RGBD_PIXEL s2)
 
 
         //使用三个差组成向量的均方根作为误差的度量
-        return sqrt(dist_rgb+dist_pos+dist_depth);
+        return sqrt(0*dist_rgb+4*dist_pos+1.5*dist_depth);
     }
 
 RGBD_PIXEL K_Means_RGBD_UV::GetZeroSample(void)
