@@ -87,7 +87,7 @@ double K_Means_RGBD_UV::ComputeSamplesDistance(RGBD_PIXEL s1,RGBD_PIXEL s2)
 
 
         //使用三个差组成向量的均方根作为误差的度量
-        return sqrt(0.5*dist_rgb+4*dist_pos+1.5*dist_depth);
+        return sqrt(0*dist_rgb+1*dist_pos+1*dist_depth);
     }
 
 RGBD_PIXEL K_Means_RGBD_UV::GetZeroSample(void)
@@ -169,21 +169,23 @@ bool K_Means_RGBD_UV::Compute(void)
     if(!GetRandomMeans()) return false;
 
     mbIsFailed=false;
-    draw(500);
+    //draw(500);
 
     // 准备迭代
     for(int i=0;i<mnItNum;i++)
     {
-        std::cout<<"it "<<i<<" ..."<<std::endl;
+    //    std::cout<<"it "<<i<<" ..."<<std::endl;
         Classified();
         ComputeCenter();
-        draw(500);
+        //draw(500);
         mvdErr.push_back(mdErr);
-        std::cout<<"err = "<<mdErr<<std::endl;
+      //  std::cout<<"err = "<<mdErr<<std::endl;
         if(mdErr<mdEpson)   break;
     }
 
+    std::cout<<"err = "<<mdErr<<std::endl;
     draw(0);
+    
 
     //mbIsFailed=true;
     return true;
