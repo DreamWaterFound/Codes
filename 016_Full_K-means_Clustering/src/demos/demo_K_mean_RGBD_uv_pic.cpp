@@ -55,8 +55,8 @@ int main(int argc, char* argv[])
 
     //对深度图像进行高斯模糊
     Mat srcBlurDepthImg,srcBlurRGBImg;
-    GaussianBlur(srcDepthImg, srcBlurDepthImg, Size(5, 5), 3, 3);
-    GaussianBlur(srcRGBImg, srcBlurRGBImg, Size(5, 5), 3, 3);
+    GaussianBlur(srcDepthImg, srcBlurDepthImg, Size(3, 3), 1, 1);
+    GaussianBlur(srcRGBImg, srcBlurRGBImg, Size(3, 3), 1, 1);
     imshow("Bulr Depth Image",srcBlurDepthImg);
     imshow("Bulr RGB Image",srcBlurRGBImg);
 
