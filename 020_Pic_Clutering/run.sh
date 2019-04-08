@@ -1,2 +1,2 @@
 #!/bin/bash
-./bin/demo ./img/t1.png ./img/d1.png 10 100 5
+./bin/demo ./img/t1.png ./img/d1.png 5 100 5
