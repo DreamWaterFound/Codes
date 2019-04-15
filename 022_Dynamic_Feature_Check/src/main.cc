@@ -93,12 +93,6 @@ void ExtractAndProcessFeatures(Mat& curImg, Mat& lastImg,
     goodFeaturesToTrack(curImg,vAllPoints,1000,0.01,8,cv::Mat(),3,true,0.04);
     cornerSubPix(curImg,vAllPoints,Size(10,10),Size(-1,-1),TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
 
-    // DEBUG 提取上一帧的特征点
-    // 首先提取当前帧的特征点
-    // goodFeaturesToTrack(lastImg,vAllLastPoints,1000,0.01,8,cv::Mat(),3,true,0.04);
-    // cornerSubPix(lastImg,vAllLastPoints,Size(10,10),Size(-1,-1),TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
-   
-
     vector<Point2f> vlast=vAllLastPoints;
     vector<Point2f> vcur=vAllPoints;
     // 计算光流金字塔
@@ -164,29 +158,6 @@ void ExtractAndProcessFeatures(Mat& curImg, Mat& lastImg,
 
     // TODO 其实这里也可以参考 DS-SLAM 中的操作，进行第二次的极线约束检查
 
-
-    // DEBUG
-    /*
-    Mat resCur,resLast;
-    cvtColor(curImg,resCur,COLOR_GRAY2BGR);
-    cvtColor(lastImg,resLast,COLOR_GRAY2BGR);
-    for(int i=0;i<vAllPoints.size();++i)
-    {
-        // if(state[i]==0) continue;
-        circle(resCur,vAllPoints[i],3,Scalar(0,255,0),-1);
-    }
-
-    for(int i=0;i<vAllLastPoints.size();++i)
-    {
-        // if(state[i]==0) continue;
-        circle(resLast,vAllLastPoints[i],3,Scalar(0,255,0),-1);
-    }
-
-    imshow("resCur",resCur);
-    imshow("resLast",resLast);
-    waitKey(0);
-    */
-
 }
 
 void DrawAndSaveResults(Mat& curImg,vector<Point2f>& vDynaPoints, vector<Point2f>& vStaticPoints, string outputPath, size_t id)
@@ -208,6 +179,13 @@ void DrawAndSaveResults(Mat& curImg,vector<Point2f>& vDynaPoints, vector<Point2f
 
     imshow("res",res);
     waitKey(1);
+
+    string id_str("_");
+    id_str+=to_string(id);
+    id_str+=string(".png");
+    
+    imwrite(outputPath+id_str,res);
+    // imwrite("res.png",res);
 
     
 }
