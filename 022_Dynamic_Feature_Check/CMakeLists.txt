@@ -21,7 +21,8 @@ list(APPEND LINK_LIBS ${OpenCV_LIBS})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 
-add_executable(${PROJECT_NAME} src/main.cc)
+add_executable(${PROJECT_NAME}_v1 src/main_v1.cc)
+target_link_libraries(${PROJECT_NAME}_v1 ${LINK_LIBS})
 
-target_link_libraries(${PROJECT_NAME} ${LINK_LIBS})
-
+add_executable(${PROJECT_NAME}_v2 src/main_v2.cc)
+target_link_libraries(${PROJECT_NAME}_v2 ${LINK_LIBS})

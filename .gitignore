@@ -7,3 +7,4 @@
 
 018_SSE_AVX_Accelerate/data/data.txt
 022_Dynamic_Feature_Check/output/*.*
+022_Dynamic_Feature_Check/Note.md
