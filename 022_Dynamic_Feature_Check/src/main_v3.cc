@@ -1,3 +1,5 @@
+// 在之前版本的基础上再加上一层优化
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -201,12 +203,43 @@ void ExtractAndProcessFeatures(Mat& curImg, Mat& lastImg,
     }
 
     // ======================= 第二次计算 =========================
-     // 进行粗略的估计
+    // 进行粗略的估计
     mask=Mat(Size(1,300),CV_8UC1);
     // 计算基础矩阵
     assert(vpLast.size()>4 && vpCur.size()>4);
     F=findFundamentalMat(vlast2,vcur2,mask,FM_RANSAC,0.1,0.99);
 
+    vector<Point2f> vlast3;
+    vector<Point2f> vcur3;
+    // 遍历当前帧中的所有特征点，进行几何约束的检查
+    for(size_t i=0;i<mask.rows;++i)
+    {
+        // 如果这个点是内点, 进行极线约束的检查
+        if(mask.at<uchar>(i, 0))
+        {
+            //得到极线参数
+            double A = F.at<double>(0, 0)*vlast2[i].x + F.at<double>(0, 1)*vlast2[i].y + F.at<double>(0, 2);
+            double B = F.at<double>(1, 0)*vlast2[i].x + F.at<double>(1, 1)*vlast2[i].y + F.at<double>(1, 2);
+            double C = F.at<double>(2, 0)*vlast2[i].x + F.at<double>(2, 1)*vlast2[i].y + F.at<double>(2, 2);
+            //通过极线约束;来计算误差
+            double dd = fabs(A*vcur2[i].x + B*vcur2[i].y + C) / sqrt(A*A + B*B); //Epipolar constraints
+            //误差小诶,说明是静态点
+            if (dd <= 0.1)
+            {
+                // vStaticPoints.push_back(Point_Pair(vpCur[i],vpLast[i]));
+                // 同时将当-
+                vcur3.push_back(vcur2[i]);
+                vlast3.push_back(vlast2[i]);
+            }
+        }
+    }
+
+    // ================ 第三次计算 =====================
+    // 进行粗略的估计
+    mask=Mat(Size(1,300),CV_8UC1);
+    // 计算基础矩阵
+    assert(vlast3.size()>4 && vcur3.size()>4);
+    F=findFundamentalMat(vlast3,vcur3,mask,FM_RANSAC,0.1,0.99);
     // 遍历当前帧中的所有特征点，进行几何约束的检查;参与检查的点是第一次光流跟踪成功的点：vpCur和vpLast
     for(size_t i=0;i<vpCur.size();++i)
     {
@@ -272,7 +305,6 @@ void DrawAndSaveResults(Mat& curImg,vector<Point_Pair>& vDynaPoints, vector<Poin
     1、（找原因）到底是光流跟踪计算的F不准的问题还是说别的原因？ 尝试将真值中的相机相对位姿变换转换成为基础矩阵，再通过差的二范数的形式来对其进行度量；
     2、（找原因）目前只是绘制出来了当前帧中点的属性问题，为何不尝试一下将上一帧中的点也绘制出来？ 【完成】
         目前是发现，之前的那些时不时跳出来的“动态点”基本原因都是因为相机运动模糊导致的
-        此外还发现，在画面的边角处往往也会产生相对较多的“动态点”，感觉这个可能和当前使用的特征点并没有去畸变有一定的关系。
  * 
  * 
  */

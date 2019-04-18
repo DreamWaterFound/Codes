@@ -26,3 +26,6 @@ target_link_libraries(${PROJECT_NAME}_v1 ${LINK_LIBS})
 
 add_executable(${PROJECT_NAME}_v2 src/main_v2.cc)
 target_link_libraries(${PROJECT_NAME}_v2 ${LINK_LIBS})
+
+add_executable(${PROJECT_NAME}_v3 src/main_v3.cc)
+target_link_libraries(${PROJECT_NAME}_v3 ${LINK_LIBS})
