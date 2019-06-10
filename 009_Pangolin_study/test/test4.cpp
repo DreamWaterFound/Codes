@@ -113,6 +113,9 @@ int main( int /*argc*/, char** /*argv*/ )
 
         d_cam.Activate(s_cam);
 
+        // 因为后面的^画图需要,暂时需要将这里的背景修改成为白色
+        glClearColor(1,1,1,0.0);
+
         //按钮的响应 - 复位视图
         if(pangolin::Pushed(resetViewBtn))
         {
@@ -191,7 +194,7 @@ int main( int /*argc*/, char** /*argv*/ )
         //绘制帧
         glPushMatrix();
         //glMultMatrixf(Twc.data());
-        glColor3f(1.0f,1.0f,1.0f);
+        glColor3f(0.0f,0.0f,1.0f);
         drawFrame();
         drawAllFrames(frames,(bool)checkOrderBtn);
         glPopMatrix();

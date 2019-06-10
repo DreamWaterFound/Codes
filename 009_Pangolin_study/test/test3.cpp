@@ -85,6 +85,9 @@ int main( int /*argc*/, char** /*argv*/ )
 
         d_cam.Activate(s_cam);
 
+        // 暂时需要用到这个程序,这里需要把这个地方,也就是背景设置成为白色
+        glClearColor(1,1,1,0.0);
+
         //按钮的响应 - 复位视图
         if(pangolin::Pushed(resetViewBtn))
         {

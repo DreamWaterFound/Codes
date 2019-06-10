@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/home/guoqing/libraries/opencv_331/include",
-                "/home/guoqing/libraries/opencv_331/include/opencv"
+                "/home/guoqing/libraries/opencv_331/include/opencv",
+                "/home/guoqing/libraries/Pangolin_050/lib/cmake/Pangolin/../../../include",
+                "/home/guoqing/libraries/eigen_333/include/eigen3"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
