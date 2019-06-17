@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 {
     cout<<"Test if the virtual environment can work when c++ calling python scripts."<<endl;
     cout<<"No parameters required."<<endl;
-    cout<<"Complied at "<<__TIME__<<" , "<<__DATE__<<endl<<endl;
+    cout<<"Complied at "<<__TIME__<<" , "<<__DATE__<<" by GNU version "<<__GNUC__<<endl<<endl;
 
     cout<<"Tring to initlize python environment ..."<<endl;
     if(init_python_env())
@@ -91,7 +91,17 @@ bool init_python_env(void)
         // cout<<PyRun_SimpleString("sys.path.append('/home/guoqing/.pyenv/versions/anaconda3-5.2.0/lib/python3.6/site-packages')")<<endl;
         // cout<<PyRun_SimpleString("sys.path.append('/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/tmp_pt/lib/python3.7/site-packages/torch')")<<endl;
         cout<<PyRun_SimpleString("sys.path.append('/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/tmp_pt/lib/python3.7/site-packages')")<<endl;
-        cout<<PyRun_SimpleString("import torch")<<endl;
+        cout<<PyRun_SimpleString("import matplotlib")<<endl;
+        // cout<<PyRun_SimpleString("import cv2")<<endl;
+
+        // 准备解决ROS加的路径问题
+
+        load_python_moudle("main","init_sys_path");
+
+        cout<<"Tring to import cv2 ..."<<endl;
+        cout<<PyRun_SimpleString("import cv2")<<endl;
+
+        load_python_moudle("main","show_img");
 
 		cout << "Python Env initialize OK."<<endl;
 
@@ -144,47 +154,10 @@ void load_python_moudle(string py_moudle_name,string py_function_name)
     }
     else
     {
-        cout<<"Line "<<__LINE__<<": python function ERROR!"<<endl;
+        cout<<"Line "<<__LINE__<<": python function "<<py_function_name<<" in python module "<<py_moudle_name<<" ERROR!"<<endl;
     }
     
 
     Py_DECREF(pModule);
     
 }
-
-// /**
-//  * @brief 调用python模块中的函数
-//  * @param[in] py_moudle_name    模块名称
-//  * @param[in] function_name     函数名称
-//  */
-// bool call_py_moudle_functions(string py_moudle_name,string function_name)
-// {
-//     PyObject * pModule = nullptr;          //Python模块指针，也就是Python文件
-// 	PyObject * pFunc   = nullptr;            //Python中的函数指针
-	
-// 	//导入python文件模块
-// 	pModule = PyImport_ImportModule(py_moudle_name.c_str());
-//     // 这里要写调用的python文件，以模块名的形式，而不是以文件的形式
-// 	if(pModule == nullptr)
-//     {
-// 		cout << "Line "<<__LINE__<<": load python module "<<py_moudle_name<<" filed."<<endl;
-// 		return false;
-// 	}
-//     else
-//     {
-//         cout<<"Loading python moudle "<<py_moudle_name<<" OK."<<endl;
-//     }
-
-//     // 直接从模块中获取函数指针
-//     pFunc = PyObject_GetAttrString(pModule, "greet_user");
-//     if(pFunc == nullptr)
-//     {
-// 		cout << "Line "<<__LINE__<<":test_python pFunc is null"<<endl;
-// 		return ;
-// 	}
-
-//     PyObject *pArg = Py_BuildValue("(s)", user_name.c_str());
-//     PyEval_CallObject(pFunc, pArg);
-
-//     Py_DECREF(pModule);
-// }
