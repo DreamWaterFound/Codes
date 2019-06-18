@@ -19,6 +19,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+
 using namespace std;
 
 // ================ 在这里定义函数原型 ==================
@@ -168,13 +170,6 @@ bool run_python_func(string py_moudle_name,string py_function_name)
 
 /**
  * @brief 将一张图片打包发送到python程序端
- * @param[in] img       等待发送的图像
- * @return true 
- * @return false 
- */
-
-/**
- * @brief 将一张图片打包发送到python程序端
  * @param[in] img                   需要发送的图像
  * @param[in] py_moudle_name        接受函数所在的python文件模块
  * @param[in] py_function_name      接受图像的函数
@@ -190,28 +185,35 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
     // step 0 构造图像数组
     if(img.empty()) return false;
 
-    
-
+    // 获取图像尺寸
     int x=img.size().width,
-           y=img.size().height,
-           z=img.channels();
+        y=img.size().height,
+        z=img.channels();
     
+    //? 用于保存啥的数组啊
+    // NOTICE 记得使用完成之后释放它
     unsigned char *CArrays=new unsigned char[x*y*z];
 
+    // 针对图像的长宽高又获取了一遍
     int iChannels = img.channels();
     int iRows = img.rows;
     int iCols = img.cols * iChannels;
+    // 判断这个图像是否是连续存储的，如果是连续存储的，那么意味着我们可以把它看成是一个一维数组，从而加速存取速度
     if (img.isContinuous())
     {
         iCols *= iRows;
         iRows = 1;
     }
 
+    // NOTICE 目前这段程序来看,只能够处理连续空间
+
+    // 指向图像中某个像素所在行的指针
     unsigned char* p;
+    // 在每一行中的元素索引
     int id = -1;
     for (int i = 0; i < iRows; i++)
     {
-        // get the pointer to the ith row
+        // get the pointer to the ith row -- 指向当前所遍历到的行
         p = img.ptr<uchar>(i);
         // operates on each pixel
         for (int j = 0; j < iCols; j++)
@@ -220,8 +222,14 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
         }
     }
 
+    // 构造numpy数组
     npy_intp Dims[3] = { y, x, z}; //注意这个维度数据！
-    PyObject *PyArray = PyArray_SimpleNewFromData(3, Dims, NPY_UBYTE, CArrays);
+    PyObject *PyArray = PyArray_SimpleNewFromData(3,            // 有几个维度
+                                                  Dims,         // 数组在每个维度上的尺度
+                                                  NPY_UBYTE,    // numpy数组中每个元素的类型
+                                                  CArrays);     // 用于构造numpy数组的初始数据
+
+    // 由于我们在python文件中使用的函数只有一个参数,所以这里构造的元组也就只有一个元素
     PyObject *ArgList = PyTuple_New(1);
     PyTuple_SetItem(ArgList, 0, PyArray);
 
@@ -267,13 +275,5 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
             delete CArrays;
         return true;
     }
-
-
-
-
-
-    
-
-
-
 }
+
