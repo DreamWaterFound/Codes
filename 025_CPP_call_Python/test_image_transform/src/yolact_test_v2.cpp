@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
 
     cout<<"Predicting Picture ,wait ...."<<endl;
     
+    // ! 注意在这个文件中,如果想要修改下面的 python文件的话,一定要记得把init_yolact函数中的这个文件也给修改了
     string py_module_name("eval_cpp_interface");
     string py_function_name("evalimage");
     if(!transform_image_to_python(img,py_module_name,py_function_name))

@@ -1,9 +1,9 @@
 /**
  * @file main.cpp
  * @author guoqing (1337841346@qq.com)
- * @brief 尝试直接调用 YOLACT 进行图像的实例分割之后，再将分割之后的结果拿回来
+ * @brief 尝试直接调用 YOLACT 进行图像的实例分割之后，再将分割之后的结果拿回来;和 eval_cpp_interface_v3.py 相对应
  * @version 0.1
- * @date 2019-06-17
+ * @date 2019-06-21
  * 
  * @copyright Copyright (c) 2019
  * 
@@ -33,7 +33,8 @@ bool run_python_func(string py_moudle_name,string py_function_name);
 // 将一张图片打包发送到python程序端
 bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_function_name);
 // 初始化YOLACT网络
-bool init_yolact(string trained_model_path,
+bool init_yolact(string py_moudle_name,string py_function_name,
+                string trained_model_path,
                 int     top_k               =5,
                 bool    cross_class_nms     =true,
                 bool    fast_nms            =true,
@@ -58,8 +59,14 @@ int main(int argc, char* argv[])
     init_python_env();
     cout<<"Initlizing Python Environment ... ==> OK."<<endl;
 
+    // =============
+
+    string py_module_name("eval_cpp_interface_v3");
+    string py_init_function_name("init_yolact");
+
     bool res;
-    res=init_yolact("/home/guoqing/nets/YOLACT/pre_models/yolact_darknet53_54_800000.pth",
+    res=init_yolact(py_module_name.c_str(),py_init_function_name.c_str(),
+    "/home/guoqing/nets/YOLACT/pre_models/yolact_darknet53_54_800000.pth",
     100,true,true,true,true,true,true,false,false,0.3,false);
 
     if(res)
@@ -88,11 +95,10 @@ int main(int argc, char* argv[])
 
     cout<<"Predicting Picture ,wait ...."<<endl;
     
-    string py_module_name("eval_cpp_interface");
-    string py_function_name("evalimage");
-    if(!transform_image_to_python(img,py_module_name,py_function_name))
+    string py_eval_function_name("evalimage");    
+    if(!transform_image_to_python(img,py_module_name,py_eval_function_name))
     {
-        cout<<"call python function \""<<py_function_name<<"\" in python module \""<<py_module_name<<"\" failed when initializing python environment."<<endl;
+        cout<<"call python function \""<<py_eval_function_name<<"\" in python module \""<<py_module_name<<"\" failed."<<endl;
         return false;
     }
 
@@ -289,7 +295,10 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
 	}
 
     // step 3 如果函数存在，那么就调用它
-    if(!PyEval_CallObject(pFunc, ArgList))
+    PyObject* pRet=nullptr;
+    pRet=PyEval_CallObject(pFunc, ArgList);
+    // if(!PyEval_CallObject(pFunc, ArgList))
+    if(!pRet)
     {
         // cout<<"==> Line "<<__LINE__<<": python function Ok!"<<endl;
         cout<<"Error: run the python function named \""<< py_function_name<<"\" in python module \""<<py_moudle_name<<"\" failed."<<endl;
@@ -300,6 +309,38 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
     }
     else
     {
+        // ! 下面的这些全部都部不对...我觉得还是得想办法找到说明文档会更好一些
+
+        // 来来来我们现在开始解析得到的返回的元组
+        PyObject *pClasses,*pScores;
+
+        // pClasses=PyTuple_GetItem(pRet,0);
+        // pScores=PyTuple_GetItem(pRet,1);
+
+        // PyObject *pTmp,*pSss;
+        // pTmp=PyTuple_GetItem(pClasses,1);
+        // int cls_id;
+        // int r1=PyArg_Parse(pTmp,"i", &cls_id);
+
+        // pSss=PyTuple_GetItem(pScores,1);
+        // float s_id;
+        // int r2=PyArg_Parse(pSss,"f", &s_id);
+
+        // cout<<"r1="<<r1<<"\tr2="<<r2<<endl;
+        // cout<<"cls_id[0]="<<cls_id<<endl;
+        // cout<<"score[0]="<<s_id<<endl;
+
+        pClasses=PyTuple_GetItem(pRet,1);
+        int cls_id;
+        int r1=PyArg_Parse(pClasses,"i", &cls_id);
+        cout<<"r1="<<r1<<endl;
+        cout<<"cls_id[0]="<<cls_id<<endl;
+
+
+
+        
+
+
         // step 4 释放
         Py_DECREF(pModule);
         if(CArrays)
@@ -309,7 +350,8 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
 }
 
 // 初始化YOLACT网络；这个函数目前必须要在初始化了python环境之后调用
-bool init_yolact(string trained_model_path,
+bool init_yolact(string py_moudle_name,string py_function_name,
+                string trained_model_path,
                 int     top_k               ,
                 bool    cross_class_nms     ,
                 bool    fast_nms            ,
@@ -324,24 +366,24 @@ bool init_yolact(string trained_model_path,
 {
     // step 0 构造函数参数
     PyObject *pArgs = PyTuple_New(12);
-    PyTuple_SetItem(pArgs, 0, Py_BuildValue("s", trained_model_path.c_str()));
-    PyTuple_SetItem(pArgs, 1, Py_BuildValue("i", top_k));
-    PyTuple_SetItem(pArgs, 2, Py_BuildValue("i", cross_class_nms));
-    PyTuple_SetItem(pArgs, 3, Py_BuildValue("i", fast_nms));
-    PyTuple_SetItem(pArgs, 4, Py_BuildValue("i", display_masks));
-    PyTuple_SetItem(pArgs, 5, Py_BuildValue("i", display_bboxes));
-    PyTuple_SetItem(pArgs, 6, Py_BuildValue("i", display_text));
-    PyTuple_SetItem(pArgs, 7, Py_BuildValue("i", display_scores));
-    PyTuple_SetItem(pArgs, 8, Py_BuildValue("i", display_lincomb));
-    PyTuple_SetItem(pArgs, 9, Py_BuildValue("i", mask_proto_debug));
+    PyTuple_SetItem(pArgs, 0,  Py_BuildValue("s", trained_model_path.c_str()));
+    PyTuple_SetItem(pArgs, 1,  Py_BuildValue("i", top_k));
+    PyTuple_SetItem(pArgs, 2,  Py_BuildValue("i", cross_class_nms));
+    PyTuple_SetItem(pArgs, 3,  Py_BuildValue("i", fast_nms));
+    PyTuple_SetItem(pArgs, 4,  Py_BuildValue("i", display_masks));
+    PyTuple_SetItem(pArgs, 5,  Py_BuildValue("i", display_bboxes));
+    PyTuple_SetItem(pArgs, 6,  Py_BuildValue("i", display_text));
+    PyTuple_SetItem(pArgs, 7,  Py_BuildValue("i", display_scores));
+    PyTuple_SetItem(pArgs, 8,  Py_BuildValue("i", display_lincomb));
+    PyTuple_SetItem(pArgs, 9,  Py_BuildValue("i", mask_proto_debug));
     PyTuple_SetItem(pArgs, 10, Py_BuildValue("f", score_threshold));
     PyTuple_SetItem(pArgs, 11, Py_BuildValue("i", detect));
 
     PyObject * pModule = nullptr;          //Python模块指针，也就是Python文件
 	PyObject * pFunc = nullptr;            //Python中的函数指针
 
-    string py_moudle_name("eval_cpp_interface");
-    string py_function_name("init_yolact");
+    // string py_moudle_name(py_moudle_name.c_str());
+    // string py_function_name(py_function_name.c_str());
 	
 	// step 1 导入python文件模块
 	pModule = PyImport_ImportModule(py_moudle_name.c_str());

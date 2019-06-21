@@ -25,6 +25,13 @@ if(PYTHONLIBS_FOUND)
 
     add_executable(yolact_test_v3 ./yolact_test_v3.cpp)
     target_link_libraries(yolact_test_v3 ${PYTHON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS} dl util)
+
+    add_executable(py_return_test ./py_return_test.cpp)
+    target_link_libraries(py_return_test ${PYTHON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS} dl util)
+
+    # add_executable(yolact_test_v4 ./yolact_test_v4.cpp)
+    # target_link_libraries(yolact_test_v4 ${PYTHON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS} dl util)
+
 else(PYTHONLIBS_FOUND)
     message(STATUS "Python Lib NOT FOUND!")
 endif(PYTHONLIBS_FOUND)
