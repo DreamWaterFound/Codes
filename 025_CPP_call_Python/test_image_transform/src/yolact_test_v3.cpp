@@ -235,6 +235,11 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
     int iChannels = img.channels();
     int iRows = img.rows;
     int iCols = img.cols * iChannels;
+
+    // DEBUG
+    cout<<"img: "<<iRows<<" x "<<iCols<<endl;
+
+
     // 判断这个图像是否是连续存储的，如果是连续存储的，那么意味着我们可以把它看成是一个一维数组，从而加速存取速度
     if (img.isContinuous())
     {
@@ -312,13 +317,220 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
         // ! 下面的这些全部都部不对...我觉得还是得想办法找到说明文档会更好一些
 
         // 来来来我们现在开始解析得到的返回的元组
-        PyObject *pClasses,*pScores;
+        PyArrayObject *pClasses,*pScores,*pBoxes,*pMasks;
 
-        // pClasses=PyTuple_GetItem(pRet,0);
-        // pScores=PyTuple_GetItem(pRet,1);
+        Py_ssize_t tuple_size;
+        tuple_size=PyTuple_Size(pRet);
+        cout<<"tuple_size="<<tuple_size<<endl;
+
+        pClasses=(PyArrayObject*)PyTuple_GetItem(pRet,0);
+        pScores =(PyArrayObject*)PyTuple_GetItem(pRet,1);
+        pBoxes  =(PyArrayObject*)PyTuple_GetItem(pRet,2);
+        pMasks  =(PyArrayObject*)PyTuple_GetItem(pRet,3);
+
+        // === classes ===
+        int len_cls=pClasses->dimensions[0];
+        cout<<"pClasses len="<<len_cls<<endl;
+        for(int i=0;i<len_cls;++i)
+        {
+            cout<<"pClasses["<<i<<"]="
+                <<*(int*)(pClasses->data+i*(pClasses->strides[0]))<<endl;
+        }
+
+        // === scorces ===
+
+        int len_src=pScores->dimensions[0];
+        cout<<"pScores len="<<len_src<<endl;
+        for(int i=0;i<len_src;++i)
+        {
+            cout<<"pScores["<<i<<"]="
+                <<*(float*)(pScores->data+i*(pScores->strides[0]))<<endl;
+        }
+
+
+        // === boxes ===
+        int box_rows=pBoxes->dimensions[0],
+            box_cols=pBoxes->dimensions[1];
+
+        cout<<"pBoxes: "<<box_rows<<" x "<<box_cols<<endl;
+
+        // for test 
+        cv::Mat disp_img=img.clone();
+
+        
+        for(int i=0;i<box_rows;++i)
+        {
+            int x1=*(int*)(pBoxes->data+i*(pBoxes->strides[0])+0*(pBoxes->strides[1])),
+                y1=*(int*)(pBoxes->data+i*(pBoxes->strides[0])+1*(pBoxes->strides[1])),
+                x2=*(int*)(pBoxes->data+i*(pBoxes->strides[0])+2*(pBoxes->strides[1])),
+                y2=*(int*)(pBoxes->data+i*(pBoxes->strides[0])+3*(pBoxes->strides[1]));
+
+            cout<<"pBoxes["<<i<<"]=[("
+                <<x1<<","<<y1<<"),("
+                <<x2<<","<<y2<<")]"
+                <<endl;
+
+            cv::rectangle(disp_img,cv::Point(x1,y1),cv::Point(x2,y2),cv::Scalar(0,255,0));
+        }
+
+        cv::imshow("c++ result",disp_img);
+        cv::waitKey(0);
+
+        // for masks
+        int mask_i=pMasks->dimensions[0],
+            mask_h=pMasks->dimensions[1],
+            mask_w=pMasks->dimensions[2];
+
+        cout<<"mask_i="<<mask_i<<"\tmask_h="<<mask_h<<"\tmask_w="<<mask_w<<endl;
+
+        cout<<"step[0]="<<pMasks->strides[0]<<endl;
+        cout<<"step[1]="<<pMasks->strides[1]<<endl;
+        cout<<"step[2]="<<pMasks->strides[2]<<endl;
+
+            
+        for(int i=0;i<mask_i;++i)
+        {
+            cv::Mat mask_img=cv::Mat(mask_h,mask_w,CV_32SC1,
+                                     (pMasks->data)+i*pMasks->strides[0]);    
+
+            cv::imshow("Mask",mask_img);
+            cout<<"Displaying mask ["<<i<<"] .."<<endl;
+            cv::waitKey(0);
+
+        }
+
+        // // 现在还是只显示第一张图像的mask
+        // cv::Mat mask_img=cv::Mat(mask_h,mask_w,CV_32SC1,pMasks->data);
+        // cv::imshow("Mask [0]",mask_img);
+        // cv::waitKey(0);
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+        // 到这里确实说明我们获得的这个是能够拿到的,不是空
+        // if(pClasses==nullptr)
+        //     cout<<"pClasses==nullptr"<<endl;
+        // if(pScores==nullptr)
+        //     cout<<"pScores==nullptr"<<endl;
+
+        // if(PyList_Check(pClasses))
+        //     cout<<"pClasses is PyList Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyList Object."<<endl;
+
+        // if(PyTuple_Check(pClasses))
+        //     cout<<"pClasses is PyTuple Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyTuple Object."<<endl;
+
+        // if(PyDict_Check(pClasses))
+        //     cout<<"pClasses is PyDict Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyDict Object."<<endl;
+
+        // if(PySet_Check(pClasses))
+        //     cout<<"pClasses is PySet Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PySet Object."<<endl;
+
+        // if(PyUnicode_Check(pClasses))
+        //     cout<<"pClasses is PyUnicode Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyUnicode Object."<<endl;
+
+        // if(PyByteArray_Check(pClasses))
+        //     cout<<"pClasses is PyByteArray Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyByteArray Object."<<endl;
+
+        // if(PyBytes_Check(pClasses))
+        //     cout<<"pClasses is PyBytes Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyBytes Object."<<endl;
+
+        // if(PyComplex_Check(pClasses))
+        //     cout<<"pClasses is PyComplex Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyComplex_Check Object."<<endl;
+
+        // if(PyFloat_Check(pClasses))
+        //     cout<<"pClasses is PyFloat_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyFloat_Check Object."<<endl;
+
+        // if(PyBool_Check(pClasses))
+        //     cout<<"pClasses is PyBool_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyBool_Check Object."<<endl;
+
+        // if(PyFloat_Check(pClasses))
+        //     cout<<"pClasses is PyFloat_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyFloat_Check Object."<<endl;
+
+        // if(PyFunction_Check(pClasses))
+        //     cout<<"pClasses is PyFunction_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyFunction_Check Object."<<endl;
+
+        // if(PyInstanceMethod_Check(pClasses))
+        //     cout<<"pClasses is PyInstanceMethod_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyInstanceMethod_Check Object."<<endl;
+
+        // if(PyCell_Check(pClasses))
+        //     cout<<"pClasses is PyCell_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyCell_Check Object."<<endl;
+
+        // if(PyCode_Check(pClasses))
+        //     cout<<"pClasses is PyCode_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyCode_Check Object."<<endl;
+
+        //  if(PyModule_Check(pClasses))
+        //     cout<<"pClasses is PyModule_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyModule_Check Object."<<endl;
+
+        // if(PySlice_Check(pClasses))
+        //     cout<<"pClasses is PySlice_Check Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PySlice_Check Object."<<endl;
+
+        // cout<<"==============="<<endl;
+
+        // // PyTypeObject* pt;
+        // // PyList_Type *ptype;
+
+        // PyObject* pClasses222222=PyObject_Init(pClasses,&PyTuple_Type);
+
+        // if(PyTuple_Check(pClasses222222))
+        //     cout<<"pClasses is PyTuple Object."<<endl;
+        // else
+        //     cout<<"pClasses is NOT a PyTuple Object."<<endl;
+
+
+
+        // // Py_ssize_t classes_size = PyList_Size(pClasses);
+        // Py_ssize_t classes_size = PyTuple_Size(pClasses222222);
+
+        // cout<<"classes_size="<<classes_size<<endl;
 
         // PyObject *pTmp,*pSss;
-        // pTmp=PyTuple_GetItem(pClasses,1);
+        // pTmp=PyTuple_GetItem(pClasses222222,1);
         // int cls_id;
         // int r1=PyArg_Parse(pTmp,"i", &cls_id);
 
@@ -330,11 +542,13 @@ bool transform_image_to_python(cv::Mat img,string py_moudle_name, string py_func
         // cout<<"cls_id[0]="<<cls_id<<endl;
         // cout<<"score[0]="<<s_id<<endl;
 
-        pClasses=PyTuple_GetItem(pRet,1);
-        int cls_id;
-        int r1=PyArg_Parse(pClasses,"i", &cls_id);
-        cout<<"r1="<<r1<<endl;
-        cout<<"cls_id[0]="<<cls_id<<endl;
+       
+
+        // pClasses=PyTuple_GetItem(pRet,1);
+        // int cls_id;
+        // int r1=PyArg_Parse(pClasses,"i", &cls_id);
+        // cout<<"r1="<<r1<<endl;
+        // cout<<"cls_id[0]="<<cls_id<<endl;
 
 
 
