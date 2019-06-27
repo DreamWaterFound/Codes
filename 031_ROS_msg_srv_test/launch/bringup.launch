@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+	<node name ="node1" pkg="one_pkg" type="node1"/>
+	<node name ="node2" pkg="one_pkg" type="node2" output="screen"/>
+	<node name ="node3" pkg="one_pkg" type="node3"/>
+</launch> 
