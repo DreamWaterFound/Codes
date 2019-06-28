@@ -1,4 +1,4 @@
-\cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 find_package(Threads REQUIRED)
 
@@ -19,7 +19,7 @@ if(PYTHONLIBS_FOUND)
     target_link_libraries(yolact ${PYTHON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS} dl util)
 
     add_executable(yolact_test ./main.cpp)
-    target_link_libraries(${PROJECT_NAME} yolact )
+    target_link_libraries(yolact_test yolact )
 
     add_dependencies(yolact_test yolact)
 

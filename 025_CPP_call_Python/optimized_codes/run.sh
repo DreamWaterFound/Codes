@@ -1,0 +1,2 @@
+#!/bin/bash
+./bin/yolact_test /home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/tmp_pt/lib/python3.7/site-packages /home/guoqing/nets/YOLACT/yolact_master-comment/eval_cpp_interface_v4.py init_yolact evalimage /home/guoqing/nets/YOLACT/pre_models/yolact_darknet53_54_800000.pth /home/guoqing/Datasets/TUM_RGBD/fr3/sitting_static/rgb/1341845690.169919.png

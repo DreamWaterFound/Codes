@@ -133,11 +133,11 @@ bool init_python_env(void)
         }
 
         
-        if(PyRun_SimpleString("sys.path.append('./')")!=0)
-        {
-            cout<<"\"sys.path.append('./')\" failed when initializing python environment."<<endl;
-            return false;
-        }
+        // if(PyRun_SimpleString("sys.path.append('./')")!=0)
+        // {
+        //     cout<<"\"sys.path.append('./')\" failed when initializing python environment."<<endl;
+        //     return false;
+        // }
 
         if(PyRun_SimpleString("sys.path.append('/home/guoqing/nets/YOLACT/yolact_master-comment/')")!=0)
         {

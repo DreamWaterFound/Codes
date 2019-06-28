@@ -19,6 +19,8 @@
 // C++基础
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <vector>
 
 // Python 支持
 #include <Python.h>
@@ -42,7 +44,8 @@ class YOLACT
 {
 public:
     // 构造函数
-    YOLACT::YOLACT( std::string pyMoudlePathAndName,
+    YOLACT( std::string pyEnvPkgsPath,
+            std::string pyMoudlePathAndName,
             std::string initPyFunctionName,
             std::string evalPyfunctionName,
             std::string trainedModelPath,
@@ -63,9 +66,41 @@ public:
 
 public:
 
-    bool isInitializedResult(void);
+    // 查看是否初始化成功
+    inline bool isInitializedResult(void) const
+    {
+        return mbIsPythonInitializedOK & mbIsYOLACTInitializedOK;
+    }
+    // 查看错误提示
+    inline const std::string& getErrorDescriptionString(void) const
+    {
+        return mstrErrDescription;
+    }
 
-    std::string getErrorDescriptionString(void);
+    // 获取网络可以识别的类别数目
+    inline size_t getCLassNum(void) const
+    {
+        return mnClassNum;
+    }
+
+    // 获取网络可以识别的类别名称
+    // 为了避免破坏封装性，这里要求必须是常值引用
+    inline const std::vector<std::string>& getClassNames(void) const 
+    {
+        return mvstrClassNames;
+    }
+
+    // 评估图像
+    // bool EvalImage(const cv::Mat& srcImage,
+    //                cv::Mat& resImage,
+    //                std::vector<size_t>& classId,
+    //                std::vector<>
+    // )
+
+    
+    
+
+
 
 
 
@@ -75,6 +110,10 @@ private:
     // Python 文件和模块相关
     std::string     mstrPyMoudlePath;
     std::string     mstrPyMoudleName;
+    // 保存类型
+    size_t mnClassNum;
+    std::vector<std::string> mvstrClassNames;
+  
     
 
 
