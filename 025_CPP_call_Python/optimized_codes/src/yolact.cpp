@@ -32,8 +32,12 @@ YOLACT::YOLACT(
             bool        displayScores ,
             bool        displayLincomb,
             bool        maskProtoDebug)
-    :mbIsYOLACTInitializedOK(false),
-     mbIsPythonInitializedOK(false)
+    :mstrEvalPyfunctionName(evalPyfunctionName),
+     mbIsYOLACTInitializedOK(false),
+     mbIsPythonInitializedOK(false),
+     mpb8ImgTmpArray(nullptr),
+     mpPyEvalModule(nullptr),
+     mpPyEvalFunc(nullptr)
 {
     // step 0 解析路径
     size_t slashPosition=pyMoudlePathAndName.find_last_of("/\\");
@@ -106,14 +110,25 @@ YOLACT::YOLACT(
     PyTuple_SetItem(pArgs, 10, Py_BuildValue("f", scoreThreshold));
     PyTuple_SetItem(pArgs, 11, Py_BuildValue("i", detect));
 
-    PyObject * pModule = nullptr;          //Python模块指针，也就是Python文件
+    
 	PyObject * pFunc = nullptr;            //Python中的函数指针
 
     // step 4 导入python文件模块
-    pModule = PyImport_ImportModule(mstrPyMoudleName.c_str());
+    // 导入numpy数组格式支持
+    if(!ImportNumPySupport())
+    {
+        sstrCommand.str("");
+        sstrCommand.clear();
+        sstrCommand<<"Error: import numpy support failed.";
+        mstrErrDescription=sstrCommand.str();
+
+        return ;
+    }
+    
+    mpPyEvalModule = PyImport_ImportModule(mstrPyMoudleName.c_str());
     
     // 这里要写调用的python文件，以模块名的形式，而不是以文件的形式
-	if(pModule == nullptr)
+	if(mpPyEvalModule == nullptr)
     {
         sstrCommand.str("");
         sstrCommand.clear();
@@ -125,8 +140,9 @@ YOLACT::YOLACT(
 		return ;
 	}
 
+
     // step 5 获取Python文件中对应的函数指针
-    pFunc = PyObject_GetAttrString(pModule, initPyFunctionName.c_str());
+    pFunc = PyObject_GetAttrString(mpPyEvalModule, initPyFunctionName.c_str());
     if(pFunc == nullptr)
     {
         sstrCommand.str("");
@@ -198,9 +214,9 @@ YOLACT::YOLACT(
         mvstrClassNames.emplace_back((char*)PyUnicode_1BYTE_DATA(PyTuple_GetItem(pRet,i)));
     } 
 
-    // step 8 释放 // ? 感觉这里还需要补全
-    // ! 而且之前出现的内存占用非常多的问题，估计是和没有能够释放一些东西有关系
-    Py_DECREF(pModule);   
+    // // step 8 释放 // ? 感觉这里还需要补全
+    // // ! 而且之前出现的内存占用非常多的问题，估计是和没有能够释放一些东西有关系
+    // Py_DECREF(pModule);   
 
     mbIsYOLACTInitializedOK=true;
 
@@ -219,6 +235,229 @@ YOLACT::~YOLACT()
         std::cout<<"Exiting python env ..."<<std::endl;
         Py_Finalize();
     }
+
+    if(mpb8ImgTmpArray)
+    {
+        delete mpb8ImgTmpArray;
+    }
+
+    if(mpPyEvalModule)
+    {
+        Py_DecRef(mpPyEvalModule);
+    }
+
+    if(mpPyEvalFunc)
+    {
+        Py_DecRef(mpPyEvalFunc);
+    }
+}
+
+bool YOLACT::EvalImage(const cv::Mat& srcImage,
+                cv::Mat& resImage,
+                std::vector<std::string>& vstrClassName,
+                std::vector<float>& vdScores,
+                std::vector<std::pair<cv::Point2i,cv::Point2i> >& vpairBBoxes,
+                std::vector<cv::Mat>& vimgMasks)
+{
+    std::vector<size_t> vnClassId;
+    bool res=EvalImage(srcImage,resImage,vnClassId,vdScores,vpairBBoxes,vimgMasks);
+    vstrClassName.clear();
+    for(int i=0;i<vnClassId.size();++i)
+    {
+        vstrClassName.push_back(mvstrClassNames[vnClassId[i]]);
+    }
+
+    return res;
+}
+
+bool YOLACT::EvalImage(const cv::Mat& srcImage,
+                cv::Mat& resImage,
+                std::vector<size_t>& vstrClassId,
+                std::vector<float>& vdScores,
+                std::vector<std::pair<cv::Point2i,cv::Point2i> >& vpairBBoxes,
+                std::vector<cv::Mat>& vimgMasks)
+{
+    // step 1 将图片转换成为NumPy的数组的形式
+    PyObject *pPyImageArray=nullptr;
+    if(!Image2Numpy(srcImage,pPyImageArray))
+    {
+        // 错误字符串的生成已经在上面的函数中进行了
+        return ;
+    }
+
+    // step 2 构造函数参数
+    PyObject *pPyArgList = PyTuple_New(1);
+    PyTuple_SetItem(pPyArgList, 0, pPyImageArray);
+
+    // step 3 获取 Python 端函数指针
+    if(!mpPyEvalModule)
+    {
+        mstrErrDescription=std::string("Python Moudle pointer ERROR.");
+        return false;
+    }
+    // 获取评估函数指针
+    if(!mpPyEvalFunc)
+    {
+        mpPyEvalFunc=PyObject_GetAttrString(mpPyEvalModule, mstrEvalPyfunctionName.c_str());
+        if(mpPyEvalFunc==nullptr)
+        {
+            std::stringstream ss;
+            ss<<"Error: YOLACT initlizing function named \"";
+            ss<<mstrEvalPyfunctionName;
+            ss<<"\" in python module \"";
+            ss<<mstrPyMoudleName;
+            ss<<"\" NOT found.";
+            mstrErrDescription=ss.str();
+            return false;
+        }
+    }
+
+    // step 5 现在说明这个函数的确存在，那么我们就调用它
+    PyObject* pPyRetValue=nullptr;
+    pPyRetValue=PyEval_CallObject(mpPyEvalModule,pPyArgList);
+
+    // step 6 返回值的初步检查和初步解析
+    if(!pPyRetValue)
+    {
+        std::stringstream ss;
+        ss<<"Error occured when calling method \"";
+        ss<<mstrEvalPyfunctionName;
+        ss<<"\" in python module \"";
+        ss<<mstrPyMoudleName;
+        ss<<"\". ";
+        mstrErrDescription=ss.str();
+        return false;
+    }
+
+    if(!PyTuple_Check(pPyRetValue))
+    {
+        mstrErrDescription=std::string("Eval image function did NOT return a tuple.");
+        return false;
+    }
+
+    if(PyTuple_Size(pPyRetValue)!=5)
+    {
+        mstrErrDescription=std::string("Eval image function did NOT return a tuple with correct items.");
+        return false;
+    }
+
+    // 存储解析后的数据
+    PyArrayObject *pClasses,*pScores,*pBoxes,*pMasks,*pResImgArray;
+
+    pClasses        = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,0);
+    pScores         = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,1);
+    pBoxes          = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,2);
+    pMasks          = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,3);
+    pResImgArray    = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,4);
+
+    // step 7 解析类别id数据
+    size_t lenOfClassesId=pClasses->dimensions[0];
+    vstrClassId.clear();
+    for(size_t i=0;i<lenOfClassesId;++i)
+    {
+        vstrClassId.push_back(
+            *(size_t*)(pClasses->data+i*(pClasses->strides[0]))
+        );
+    }
+
+    // step 8 解析类别评分数据
+    size_t lenOfScorces=pScores->dimensions[0];
+    vdScores.clear();
+    for(size_t i=0;i<lenOfScorces;++i)
+    {
+        vdScores.push_back(
+            *(float*)(pScores->data+i*(pScores->strides[0]))
+        );
+    }
+
+    // step 9 TODO 
+
+    // step 10 TODO 
+
+
+    // step ？处理结果图像
+    // TODO 其实这里可以在增加处理一个能够不处理这个结果图像的函数 --- 这样就可以加快处理速度了
+
+    size_t resImageH=pResImgArray->dimensions[0],
+           resImageW=pResImgArray->dimensions[1];
+
+    resImage=cv::Mat(resImageH,resImageW,CV_8UC3,pResImgArray->data);
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+}
+
+bool YOLACT::Image2Numpy(const cv::Mat& srcImage,
+                PyObject *pPyArray) 
+{
+    // step 0 检查图像是否非空
+    if(srcImage.empty())
+    {
+        mstrErrDescription=std::string("src image is empty!");
+        return false;
+    }
+
+    // step 1 生成临时的图像数组，图像数组暂时是缓存在成员变量里。检查合法性
+    if(mpb8ImgTmpArray)
+    {
+        delete mpb8ImgTmpArray;
+    }
+
+    // 获取图像的尺寸
+    size_t x=srcImage.size().width,
+           y=srcImage.size().height,
+           z=srcImage.channels();
+    // 生成
+    mpb8ImgTmpArray=new unsigned char[x*y*z];
+
+    size_t iChannels = srcImage.channels(),
+           iRows     = srcImage.rows,
+           iCols     = srcImage.cols * iChannels;
+
+    // 判断这个图像是否是连续存储的，如果是连续存储的，那么意味着我们可以把它看成是一个一维数组，从而加速存取速度
+    if (srcImage.isContinuous())
+    {
+        iCols *= iRows;
+        iRows = 1;
+    }
+
+    // 指向图像中某个像素所在行的指针
+    unsigned char* p;
+    // 在每一行中的元素索引
+    int id = -1;
+    for (int i = 0; i < iRows; i++)
+    {
+        // get the pointer to the ith row -- 指向当前所遍历到的行
+        p = (unsigned char*)srcImage.ptr<unsigned char>(i);
+        // operates on each pixel
+        for (int j = 0; j < iCols; j++)
+        {
+            mpb8ImgTmpArray[++id] = p[j];//连续空间
+        }
+    }
+
+    // step 2 生成三维的numpy
+    npy_intp Dims[3] = {(int)y, 
+                        (int)x, 
+                        (int)z}; //注意这个维度数据！
+    pPyArray = PyArray_SimpleNewFromData(
+        3,                      // 有几个维度
+        Dims,                   // 数组在每个维度上的尺度
+        NPY_UBYTE,              // numpy数组中每个元素的类型
+        mpb8ImgTmpArray);       // 用于构造numpy数组的初始数据
+
+    return true;
 }
 
 
