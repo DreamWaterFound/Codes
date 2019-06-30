@@ -37,7 +37,9 @@ YOLACT::YOLACT(
      mbIsPythonInitializedOK(false),
      mpb8ImgTmpArray(nullptr),
      mpPyEvalModule(nullptr),
-     mpPyEvalFunc(nullptr)
+     mpPyEvalFunc(nullptr),
+     mpPyArgList(nullptr),
+     mpPyRetValue(nullptr)
 {
     // step 0 解析路径
     size_t slashPosition=pyMoudlePathAndName.find_last_of("/\\");
@@ -230,25 +232,38 @@ YOLACT::YOLACT(
 // 析构函数
 YOLACT::~YOLACT()
 {
-    if(mbIsPythonInitializedOK)
-    {
-        std::cout<<"Exiting python env ..."<<std::endl;
-        Py_Finalize();
-    }
+   
 
     if(mpb8ImgTmpArray)
     {
         delete mpb8ImgTmpArray;
     }
 
-    if(mpPyEvalModule)
+    if(mpPyArgList)
     {
-        Py_DecRef(mpPyEvalModule);
+        Py_DECREF(mpPyArgList);
     }
 
+    if(mpPyRetValue)
+    {
+        Py_DECREF(mpPyRetValue);
+    }
+
+    // 这个貌似是不要加，不知道为什么加上去之后反而会报错
     if(mpPyEvalFunc)
     {
-        Py_DecRef(mpPyEvalFunc);
+        Py_DECREF(mpPyEvalFunc);
+    }
+
+    if(mpPyEvalModule)
+    {
+        Py_DECREF(mpPyEvalModule);
+    }
+
+     if(mbIsPythonInitializedOK)
+    {
+        std::cout<<"Exiting python env ..."<<std::endl;
+        Py_Finalize();
     }
 }
 
@@ -282,12 +297,21 @@ bool YOLACT::EvalImage(const cv::Mat& srcImage,
     if(!Image2Numpy(srcImage,pPyImageArray))
     {
         // 错误字符串的生成已经在上面的函数中进行了
-        return ;
+        return false;
+    }
+
+    if(!pPyImageArray)
+    {
+        mstrErrDescription=std::string("pPyImageArray shouldn't be empty.");
+        return false;
     }
 
     // step 2 构造函数参数
-    PyObject *pPyArgList = PyTuple_New(1);
-    PyTuple_SetItem(pPyArgList, 0, pPyImageArray);
+    if(mpPyArgList==nullptr)
+    {
+        mpPyArgList=PyTuple_New(1);
+    }
+    PyTuple_SetItem(mpPyArgList, 0, pPyImageArray);
 
     // step 3 获取 Python 端函数指针
     if(!mpPyEvalModule)
@@ -295,14 +319,15 @@ bool YOLACT::EvalImage(const cv::Mat& srcImage,
         mstrErrDescription=std::string("Python Moudle pointer ERROR.");
         return false;
     }
+
     // 获取评估函数指针
     if(!mpPyEvalFunc)
     {
         mpPyEvalFunc=PyObject_GetAttrString(mpPyEvalModule, mstrEvalPyfunctionName.c_str());
-        if(mpPyEvalFunc==nullptr)
+        if(!mpPyEvalFunc)
         {
             std::stringstream ss;
-            ss<<"Error: YOLACT initlizing function named \"";
+            ss<<"Error: YOLACT function named \"";
             ss<<mstrEvalPyfunctionName;
             ss<<"\" in python module \"";
             ss<<mstrPyMoudleName;
@@ -313,11 +338,14 @@ bool YOLACT::EvalImage(const cv::Mat& srcImage,
     }
 
     // step 5 现在说明这个函数的确存在，那么我们就调用它
-    PyObject* pPyRetValue=nullptr;
-    pPyRetValue=PyEval_CallObject(mpPyEvalModule,pPyArgList);
+    if(mpPyRetValue)
+    {
+        Py_DECREF(mpPyRetValue);
+    }
+    mpPyRetValue=PyEval_CallObject(mpPyEvalFunc,mpPyArgList);
 
     // step 6 返回值的初步检查和初步解析
-    if(!pPyRetValue)
+    if(!mpPyRetValue)
     {
         std::stringstream ss;
         ss<<"Error occured when calling method \"";
@@ -329,13 +357,15 @@ bool YOLACT::EvalImage(const cv::Mat& srcImage,
         return false;
     }
 
-    if(!PyTuple_Check(pPyRetValue))
+    
+    if(!PyTuple_Check(mpPyRetValue))
     {
         mstrErrDescription=std::string("Eval image function did NOT return a tuple.");
         return false;
     }
 
-    if(PyTuple_Size(pPyRetValue)!=5)
+    
+    if(PyTuple_Size(mpPyRetValue)!=5)
     {
         mstrErrDescription=std::string("Eval image function did NOT return a tuple with correct items.");
         return false;
@@ -344,11 +374,11 @@ bool YOLACT::EvalImage(const cv::Mat& srcImage,
     // 存储解析后的数据
     PyArrayObject *pClasses,*pScores,*pBoxes,*pMasks,*pResImgArray;
 
-    pClasses        = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,0);
-    pScores         = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,1);
-    pBoxes          = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,2);
-    pMasks          = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,3);
-    pResImgArray    = (PyArrayObject*)PyTuple_GetItem(pPyRetValue,4);
+    pClasses        = (PyArrayObject*)PyTuple_GetItem(mpPyRetValue,0);
+    pScores         = (PyArrayObject*)PyTuple_GetItem(mpPyRetValue,1);
+    pBoxes          = (PyArrayObject*)PyTuple_GetItem(mpPyRetValue,2);
+    pMasks          = (PyArrayObject*)PyTuple_GetItem(mpPyRetValue,3);
+    pResImgArray    = (PyArrayObject*)PyTuple_GetItem(mpPyRetValue,4);
 
     // step 7 解析类别id数据
     size_t lenOfClassesId=pClasses->dimensions[0];
@@ -370,12 +400,35 @@ bool YOLACT::EvalImage(const cv::Mat& srcImage,
         );
     }
 
-    // step 9 TODO 
+    // step 9 解析 Bounding box 数据
+    size_t bboxRols=pBoxes->dimensions[0],
+           bboxRows=pBoxes->dimensions[1];
+    vpairBBoxes.clear();
+    for(size_t i=0;i<bboxRows;++i)
+    {
+        cv::Point2i p1(
+            *(int*)(pBoxes->data+i*(pBoxes->strides[0])+0*(pBoxes->strides[1])),
+            *(int*)(pBoxes->data+i*(pBoxes->strides[0])+1*(pBoxes->strides[1]))),
+                    p2(
+            *(int*)(pBoxes->data+i*(pBoxes->strides[0])+2*(pBoxes->strides[1])),
+            *(int*)(pBoxes->data+i*(pBoxes->strides[0])+3*(pBoxes->strides[1])));
+        
+        vpairBBoxes.emplace_back(p1,p2);
+    }
 
-    // step 10 TODO 
+    // step 10 处理mask
+    size_t maskStepN=pMasks->dimensions[0],
+           maskStepH=pMasks->dimensions[1],
+           maskStepW=pMasks->dimensions[2];
+    vimgMasks.clear();
+    for(size_t i=0;i>maskStepN;++i)
+    {
+        vimgMasks.emplace_back(maskStepH,maskStepW,CV_32SC1,
+            (pMasks->data)+i*pMasks->strides[0]);
+    }
 
 
-    // step ？处理结果图像
+    // step 11 处理结果图像
     // TODO 其实这里可以在增加处理一个能够不处理这个结果图像的函数 --- 这样就可以加快处理速度了
 
     size_t resImageH=pResImgArray->dimensions[0],
@@ -383,23 +436,19 @@ bool YOLACT::EvalImage(const cv::Mat& srcImage,
 
     resImage=cv::Mat(resImageH,resImageW,CV_8UC3,pResImgArray->data);
 
-
-
-
+    // NOTICE 现在不管是否出现错误，都要在这里先把之前生成的东西释放掉
+    // Py_DECREF(pPyImageArray);
+    // Py_DECREF(pPyArgList);
+    // 不应该是在这里取消 BUG
+    // Py_DECREF(pPyRetValue);
 
     
-
-
-
-
-
-
-
-
+    
+    return true;
 }
 
 bool YOLACT::Image2Numpy(const cv::Mat& srcImage,
-                PyObject *pPyArray) 
+                PyObject*& pPyArray) 
 {
     // step 0 检查图像是否非空
     if(srcImage.empty())
@@ -409,15 +458,15 @@ bool YOLACT::Image2Numpy(const cv::Mat& srcImage,
     }
 
     // step 1 生成临时的图像数组，图像数组暂时是缓存在成员变量里。检查合法性
-    if(mpb8ImgTmpArray)
-    {
-        delete mpb8ImgTmpArray;
-    }
-
     // 获取图像的尺寸
     size_t x=srcImage.size().width,
            y=srcImage.size().height,
            z=srcImage.channels();
+
+    if(mpb8ImgTmpArray)
+    {
+        delete mpb8ImgTmpArray;
+    }
     // 生成
     mpb8ImgTmpArray=new unsigned char[x*y*z];
 
@@ -459,8 +508,6 @@ bool YOLACT::Image2Numpy(const cv::Mat& srcImage,
 
     return true;
 }
-
-
 
 }       // namespace YOLACT
 

@@ -36,22 +36,62 @@ int main(int argc, char* argv[])
     {
         cout<<"Main: yolact ok."<<endl;
         cout<<"We have "<<yolact_net.getCLassNum()<<" classes."<<endl;
-        cout<<"They are:"<<endl;
-        // 注意这里获得是常值引用
-        const vector<string> classes=yolact_net.getClassNames();
-        for(size_t i=0;i<classes.size();++i)
-        {
-            cout<<classes[i]<<endl;
-        }
+        // cout<<"They are:"<<endl;
+        // // 注意这里获得是常值引用
+        // const vector<string> classes=yolact_net.getClassNames();
+        // for(size_t i=0;i<classes.size();++i)
+        // {
+        //     cout<<classes[i]<<endl;
+        // }
     }
     else
     {
         cout<<"Main: yolact Failed. Error message:"<<endl;
         cout<<yolact_net.getErrorDescriptionString()<<endl;
+        return 0;
     }
+
+    vector<size_t> vstrClassName;
+    vector<float> vdScores;
+    vector<pair<cv::Point2i,cv::Point2i> > vpairBBoxes;
+    vector<cv::Mat> vimgMasks;
+    cv::Mat res,src;
     
+    // 读入等待进行评估的图像
+    src=cv::imread(strEvalImagePath);
+    if(src.empty())
+    {
+        cout<<"Read image "<<strEvalImagePath<<" Error!"<<endl;
+        return 0;
+    }
+
+    cout<<"Eval ing..."<<endl;
+
+    // 说明读入的图像是没有问题的，现在准备进行评估
+    bool isOk=yolact_net.EvalImage(src,res,
+        vstrClassName,vdScores,vpairBBoxes,vimgMasks);
+
+    if(!isOk)
+    {
+        cout<<"Error occured when eval image. tips:"<<endl;
+        cout<<yolact_net.getErrorDescriptionString()<<endl;
+        return 0;
+    }
+
+    cout<<"Eval ok."<<endl;
+
+    if(res.empty())
+    {
+        cout<<"Error: result iamge is empty!"<<endl;
+        return 0;
+    }
+
+    // 既然运行ok，那么我们就要显示结果图像了～
+    cv::imshow("Result",res);
+    cv::waitKey(0);
 
     return 0;
+
 }
 
 

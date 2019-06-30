@@ -14,6 +14,7 @@ if(PYTHONLIBS_FOUND)
     include_directories(${PYTHON_INCLUDE_DIRS})
     include_directories(${OpenCV_INCLUDE_DIRS})
     include_directories(${PROJECT_SOURCE_DIR}/include)
+    include_directories(${PROJECT_SOURCE_DIR})
 
     add_library(yolact yolact.cpp)
     target_link_libraries(yolact ${PYTHON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS} dl util)
@@ -21,7 +22,12 @@ if(PYTHONLIBS_FOUND)
     add_executable(yolact_test ./main.cpp)
     target_link_libraries(yolact_test yolact )
 
+    add_executable(tum_yolact_test ./tum_test.cpp)
+    target_link_libraries(tum_yolact_test yolact )
+
     add_dependencies(yolact_test yolact)
+    add_dependencies(tum_yolact_test yolact)
+
 
 else(PYTHONLIBS_FOUND)
     message(STATUS "Python Lib NOT FOUND!")

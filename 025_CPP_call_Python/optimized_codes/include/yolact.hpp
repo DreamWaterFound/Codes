@@ -134,7 +134,7 @@ private:
     }
 
     bool Image2Numpy(const cv::Mat& srcImage,
-                PyObject *pPyArray);
+                PyObject*& pPyArray);
 
 private:
 
@@ -156,6 +156,10 @@ private:
     bool            mbIsYOLACTInitializedOK;
     bool            mbIsPythonInitializedOK;
     std::string     mstrErrDescription;
+
+    // 一些中间的文件
+    PyObject *mpPyArgList;
+    PyObject *mpPyRetValue;
 
     
 
