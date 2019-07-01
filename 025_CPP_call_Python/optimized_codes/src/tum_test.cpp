@@ -75,6 +75,8 @@ int main(int argc, char* argv[])
 
         // cout<<"Eval ing..."<<endl;
 
+        // cv::resize(src,src,cv::Size(320,240));
+
         // 说明读入的图像是没有问题的，现在准备进行评估
         bool isOk=yolact_net.EvalImage(src,res,
             vstrClassName,vdScores,vpairBBoxes,vimgMasks);

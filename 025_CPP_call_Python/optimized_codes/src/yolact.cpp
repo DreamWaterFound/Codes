@@ -221,9 +221,6 @@ YOLACT::YOLACT(
     // Py_DECREF(pModule);   
 
     mbIsYOLACTInitializedOK=true;
-
-
-    // DEBUG 
     std::cout<<"Final OK."<<std::endl;
 
 
@@ -249,7 +246,6 @@ YOLACT::~YOLACT()
         Py_DECREF(mpPyRetValue);
     }
 
-    // 这个貌似是不要加，不知道为什么加上去之后反而会报错
     if(mpPyEvalFunc)
     {
         Py_DECREF(mpPyEvalFunc);
@@ -264,6 +260,7 @@ YOLACT::~YOLACT()
     {
         std::cout<<"Exiting python env ..."<<std::endl;
         Py_Finalize();
+        std::cout<<"Done."<<std::endl;
     }
 }
 
