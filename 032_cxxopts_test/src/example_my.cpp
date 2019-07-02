@@ -28,9 +28,9 @@ int main(int argc, char* argv[])
     options.add_options()
       ("d,datasets","Datasets path",cxxopts::value<std::string>())
       ("a,associate","associate file",cxxopts::value<std::string>())
+      ("h,help","print help")
       ;
 
-    // 
     options.parse_positional({"associate","datasets"});
 
     auto result = options.parse(argc, argv);
