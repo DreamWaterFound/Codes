@@ -1,0 +1,33 @@
+my_int = 23
+my_float = 3.141592654
+my_string = "Guoqing Liu" 
+# 考虑到时间暂时使用不到，所以这里也就不进行相关的实验了
+# my_date=1979-05-27T07:32:00-08:00
+
+
+
+[profile]
+name = "guoqing"
+id = 1801934
+
+    [profile.scorce]
+    chinese=96
+    math=39
+    english=69
+
+    [profile.grade]
+    pe = "A"
+    computer = "C"
+    music = "A"
+
+[arr]
+arr_same = [1,2,3,4,5]
+# 嵌套列表
+arr_mixed = [
+    [3,1,4,5],
+    ["Guoqing","Liu"],
+    [3.1415,2.72818,6.88047]
+]
+
+
+
