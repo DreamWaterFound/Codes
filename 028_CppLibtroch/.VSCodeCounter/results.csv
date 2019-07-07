@@ -1,0 +1,22 @@
+filename, language, Markdown, C++, CMake, C, Makefile, log, CMake Cache, comment, blank, total
+ReadMe.md, Markdown, 6, 0, 0, 0, 0, 0, 0, 0, 3, 9
+build/CMakeCache.txt, CMake Cache, 0, 0, 0, 0, 0, 0, 515, 0, 117, 632
+build/CMakeFiles/3.10.0/CMakeCCompiler.cmake, CMake, 0, 0, 57, 0, 0, 0, 0, 0, 17, 74
+build/CMakeFiles/3.10.0/CMakeCXXCompiler.cmake, CMake, 0, 0, 59, 0, 0, 0, 0, 0, 17, 76
+build/CMakeFiles/3.10.0/CMakeSystem.cmake, CMake, 0, 0, 10, 0, 0, 0, 0, 0, 6, 16
+build/CMakeFiles/3.10.0/CompilerIdC/CMakeCCompilerId.c, C, 0, 0, 0, 449, 0, 0, 0, 51, 99, 599
+build/CMakeFiles/3.10.0/CompilerIdCXX/CMakeCXXCompilerId.cpp, C++, 0, 427, 0, 0, 0, 0, 0, 53, 97, 577
+build/CMakeFiles/CMakeDirectoryInformation.cmake, CMake, 0, 0, 12, 0, 0, 0, 0, 0, 5, 17
+build/CMakeFiles/CMakeError.log, log, 0, 0, 0, 0, 0, 48, 0, 0, 8, 56
+build/CMakeFiles/CMakeOutput.log, log, 0, 0, 0, 0, 0, 580, 0, 0, 68, 648
+build/CMakeFiles/Makefile.cmake, CMake, 0, 0, 66, 0, 0, 0, 0, 0, 6, 72
+build/CMakeFiles/example_01.dir/DependInfo.cmake, CMake, 0, 0, 20, 0, 0, 0, 0, 0, 4, 24
+build/CMakeFiles/example_01.dir/cmake_clean.cmake, CMake, 0, 0, 9, 0, 0, 0, 0, 0, 2, 11
+build/CMakeFiles/feature_tests.c, C, 0, 0, 0, 31, 0, 0, 0, 0, 4, 35
+build/CMakeFiles/feature_tests.cxx, C++, 0, 402, 0, 0, 0, 0, 0, 0, 4, 406
+build/Makefile, Makefile, 0, 0, 0, 0, 82, 0, 0, 43, 54, 179
+build/cmake_install.cmake, CMake, 0, 0, 42, 0, 0, 0, 0, 0, 8, 50
+build/detect_cuda_compute_capabilities.cpp, C++, 0, 15, 0, 0, 0, 0, 0, 0, 1, 16
+build/detect_cuda_version.cc, C++, 0, 6, 0, 0, 0, 0, 0, 0, 1, 7
+src/example_01.cpp, C++, 0, 12, 0, 0, 0, 0, 0, 0, 5, 17
+Total, -, 6, 862, 275, 480, 82, 628, 515, 147, 526, 3521

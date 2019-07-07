@@ -1,0 +1,57 @@
+Date : 2019-07-06 09:31:52
+Directory : /home/guoqing/Codes/028_CppLibtroch
+Total : 20 files,  2848 codes, 147 comments, 526 blanks, all 3521 lines
+
+Languages
++-------------+------------+------------+------------+------------+------------+
+| language    | files      | code       | comment    | blank      | total      |
++-------------+------------+------------+------------+------------+------------+
+| C++         |          5 |        862 |         53 |        108 |      1,023 |
+| log         |          2 |        628 |          0 |         76 |        704 |
+| CMake Cache |          1 |        515 |          0 |        117 |        632 |
+| C           |          2 |        480 |         51 |        103 |        634 |
+| CMake       |          8 |        275 |          0 |         65 |        340 |
+| Makefile    |          1 |         82 |         43 |         54 |        179 |
+| Markdown    |          1 |          6 |          0 |          3 |          9 |
++-------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                         | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                            |         20 |      2,848 |        147 |        526 |      3,521 |
+| build                                                        |         18 |      2,830 |        147 |        518 |      3,495 |
+| build/CMakeFiles                                             |         13 |      2,170 |        104 |        337 |      2,611 |
+| build/CMakeFiles/3.10.0                                      |          5 |      1,002 |        104 |        236 |      1,342 |
+| build/CMakeFiles/3.10.0/CompilerIdC                          |          1 |        449 |         51 |         99 |        599 |
+| build/CMakeFiles/3.10.0/CompilerIdCXX                        |          1 |        427 |         53 |         97 |        577 |
+| build/CMakeFiles/example_01.dir                              |          2 |         29 |          0 |          6 |         35 |
+| src                                                          |          1 |         12 |          0 |          5 |         17 |
++--------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------+-------------+------------+------------+------------+------------+
+| filename                                                     | language    | code       | comment    | blank      | total      |
++--------------------------------------------------------------+-------------+------------+------------+------------+------------+
+| ReadMe.md                                                    | Markdown    |          6 |          0 |          3 |          9 |
+| build/CMakeCache.txt                                         | CMake Cache |        515 |          0 |        117 |        632 |
+| build/CMakeFiles/3.10.0/CMakeCCompiler.cmake                 | CMake       |         57 |          0 |         17 |         74 |
+| build/CMakeFiles/3.10.0/CMakeCXXCompiler.cmake               | CMake       |         59 |          0 |         17 |         76 |
+| build/CMakeFiles/3.10.0/CMakeSystem.cmake                    | CMake       |         10 |          0 |          6 |         16 |
+| build/CMakeFiles/3.10.0/CompilerIdC/CMakeCCompilerId.c       | C           |        449 |         51 |         99 |        599 |
+| build/CMakeFiles/3.10.0/CompilerIdCXX/CMakeCXXCompilerId.cpp | C++         |        427 |         53 |         97 |        577 |
+| build/CMakeFiles/CMakeDirectoryInformation.cmake             | CMake       |         12 |          0 |          5 |         17 |
+| build/CMakeFiles/CMakeError.log                              | log         |         48 |          0 |          8 |         56 |
+| build/CMakeFiles/CMakeOutput.log                             | log         |        580 |          0 |         68 |        648 |
+| build/CMakeFiles/Makefile.cmake                              | CMake       |         66 |          0 |          6 |         72 |
+| build/CMakeFiles/example_01.dir/DependInfo.cmake             | CMake       |         20 |          0 |          4 |         24 |
+| build/CMakeFiles/example_01.dir/cmake_clean.cmake            | CMake       |          9 |          0 |          2 |         11 |
+| build/CMakeFiles/feature_tests.c                             | C           |         31 |          0 |          4 |         35 |
+| build/CMakeFiles/feature_tests.cxx                           | C++         |        402 |          0 |          4 |        406 |
+| build/Makefile                                               | Makefile    |         82 |         43 |         54 |        179 |
+| build/cmake_install.cmake                                    | CMake       |         42 |          0 |          8 |         50 |
+| build/detect_cuda_compute_capabilities.cpp                   | C++         |         15 |          0 |          1 |         16 |
+| build/detect_cuda_version.cc                                 | C++         |          6 |          0 |          1 |          7 |
+| src/example_01.cpp                                           | C++         |         12 |          0 |          5 |         17 |
+| Total                                                        |             |      2,848 |        147 |        526 |      3,521 |
++--------------------------------------------------------------+-------------+------------+------------+------------+------------+
