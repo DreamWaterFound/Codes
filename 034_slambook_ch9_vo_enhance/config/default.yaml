@@ -1,20 +1,20 @@
 %YAML:1.0
 # data
 # the tum dataset directory, change it to yours! 
-dataset_dir: /home/guoqing/Datasets/TUM_RGBD/fr1/desk
+dataset_dir: /home/guoqing/Datasets/TUM_RGBD/fr2/desk_with_person
 
 # camera intrinsics
-# fr1
-camera.fx: 517.3
-camera.fy: 516.5
-camera.cx: 325.1
-camera.cy: 249.7
+# # fr1
+# camera.fx: 517.3
+# camera.fy: 516.5
+# camera.cx: 325.1
+# camera.cy: 249.7
 
 # fr2
-#camera.fx: 520.9
-#camera.fy: 521.0
-#camera.cx: 325.1
-#camera.cy: 249.7
+camera.fx: 520.9
+camera.fy: 521.0
+camera.cx: 325.1
+camera.cy: 249.7
 
 camera.depth_scale: 5000
 

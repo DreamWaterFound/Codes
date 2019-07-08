@@ -1,4 +1,6 @@
 // -------------- test the visual odometry -------------
+#include<iomanip>
+
 #include <fstream>
 #include <boost/timer.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -8,6 +10,10 @@
 
 #include "myslam/config.h"
 #include "myslam/visual_odometry.h"
+
+#include <Eigen/Core>
+#include <Eigen/Dense>
+#include <Eigen/StdVector>
 
 int main ( int argc, char** argv )
 {
@@ -59,6 +65,15 @@ int main ( int argc, char** argv )
     vis.showWidget ( "Camera", camera_coor );
 
     cout<<"read total "<<rgb_files.size() <<" entries"<<endl;
+
+    // 创建位姿的输出文件
+    ofstream ofs;
+    ofs.open("./CameraPoses.txt");
+    ofs<<"# timestamp x y z q0 q1 q2 q3"<<endl;
+    ofs<<fixed;
+    
+
+
     for ( int i=0; i<rgb_files.size(); i++ )
     {
         cout<<"****** loop "<<i<<" ******"<<endl;
@@ -79,6 +94,45 @@ int main ( int argc, char** argv )
         if ( vo->state_ == myslam::VisualOdometry::LOST )
             break;
         SE3 Twc = pFrame->T_c_w_.inverse();
+
+        Eigen::Matrix3d rotation_matrix=Eigen::Matrix3d::Identity();
+        rotation_matrix<<
+            Twc.rotation_matrix() ( 0,0 ), Twc.rotation_matrix() ( 0,1 ), Twc.rotation_matrix() ( 0,2 ),
+            Twc.rotation_matrix() ( 1,0 ), Twc.rotation_matrix() ( 1,1 ), Twc.rotation_matrix() ( 1,2 ),
+            Twc.rotation_matrix() ( 2,0 ), Twc.rotation_matrix() ( 2,1 ), Twc.rotation_matrix() ( 2,2 );
+
+        Eigen::Quaterniond q=Eigen::Quaterniond(rotation_matrix);
+        
+
+        // 输出到文件
+        ofs<<setprecision(6)<<rgb_times[i]<<" "
+
+            <<setprecision(9)
+            <<Twc.translation() ( 0,0 )<<" "
+            <<Twc.translation() ( 1,0 )<<" "
+            <<Twc.translation() ( 2,0 )<<" "
+
+            <<q.coeffs()[0]<<" "
+            <<q.coeffs()[1]<<" "
+            <<q.coeffs()[2]<<" "
+            <<q.coeffs()[3]<<endl;
+            
+
+        // Eigen::Isometry3d T=Eigen::Isometry3d::Identity();
+
+        // T.rotate(rotation_matrix);
+        // T.translate(Eigen::Vector3d(
+        //     Twc.translation() ( 0,0 ),
+        //     Twc.translation() ( 1,0 ),
+        //     Twc.translation() ( 2,0 )));
+
+        
+        
+
+
+
+
+
 
         // show the map and the camera pose
         cv::Affine3d M (
@@ -106,6 +160,8 @@ int main ( int argc, char** argv )
         vis.spinOnce ( 1, false );
         cout<<endl;
     }
+
+    ofs.close();
 
     return 0;
 }

@@ -230,6 +230,8 @@ void VisualOdometry::poseEstimationPnP()
     );
     
     cout<<"T_c_w_estimated_: "<<endl<<T_c_w_estimated_.matrix()<<endl;
+    // 在这里输出
+    
 }
 
 bool VisualOdometry::checkEstimatedPose()
