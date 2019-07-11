@@ -15,6 +15,10 @@ if(PYTHONLIBS_FOUND)
     include_directories(${OpenCV_INCLUDE_DIRS})
     include_directories(${PROJECT_SOURCE_DIR}/include)
     include_directories(${PROJECT_SOURCE_DIR})
+    include_directories(BEFORE "/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/my_py_pt/lib/python3.7/site-packages/numpy/core/include/numpy")
+    include_directories(BEFORE "/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/my_py_pt/lib/python3.7/site-packages/numpy/core/include")
+
+    
 
     add_library(yolact yolact.cpp)
     target_link_libraries(yolact ${PYTHON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS} dl util)

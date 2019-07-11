@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "yolact.hpp"
+#include "yolact_interface.hpp"
 
 using namespace std;
 
@@ -36,13 +36,14 @@ int main(int argc, char* argv[])
     {
         cout<<"Main: yolact ok."<<endl;
         cout<<"We have "<<yolact_net.getCLassNum()<<" classes."<<endl;
-        // cout<<"They are:"<<endl;
-        // // 注意这里获得是常值引用
-        // const vector<string> classes=yolact_net.getClassNames();
-        // for(size_t i=0;i<classes.size();++i)
-        // {
-        //     cout<<classes[i]<<endl;
-        // }
+
+        cout<<"They are:"<<endl;
+        // 注意这里获得是常值引用
+        const vector<string> classes=yolact_net.getClassNames();
+        for(size_t i=0;i<classes.size();++i)
+        {
+            cout<<classes[i]<<endl;
+        }
     }
     else
     {
