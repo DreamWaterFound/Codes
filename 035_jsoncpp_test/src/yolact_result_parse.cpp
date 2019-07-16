@@ -1,11 +1,10 @@
 #include <json/json.h>
+#include <json/value.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
 using namespace std;
-// using namespace Json;
-
 
 int Json_ReadInt(Json::Value JV, int ori_value = 0);
 double Json_ReadDouble(Json::Value JV, double ori_value = 0.0);
@@ -27,14 +26,14 @@ int main(int argc, char* argv[])
 	fin.open(argv[1]);
 	if(!fin)
 	{
-		cout<<"Error: Json file: "<<argv[1]<<" open failed."<<endl;
+		cout<<"[Fatal] Json file: "<<argv[1]<<" open failed."<<endl;
 	}
 	else
 	{
-		cout<<"Info: Json file: "<<argv[1]<<" open ... ok."<<endl;
+		cout<<"[Info ] Json file: "<<argv[1]<<" open ... ok."<<endl;
 	}
 
-	Json::Value JsonRoot;
+	Json::Value JsonRoot,JsonObjLoop;
 	// 建议使用这样子的解析方式
 	try
 	{
@@ -48,6 +47,33 @@ int main(int argc, char* argv[])
 		// cout<<"\twhat(): "<< e.what()<<endl;
 		return 0;
 	}
+
+    // 准备读取数据，获取Json文件中的数据总量
+    int i=-1;
+    stringstream ss;
+
+    do
+    {
+        ++i;
+        ss.clear();
+        ss.str("");
+        ss<<i;
+    } while (JsonRoot[ss.str()].isObject());
+
+    cout<<"[info ] Total json object: "<<i<<endl;
+
+    // 这里现在只是在读取第0个物体的数据
+	Json::Value JsonObj1 = JsonRoot["0"];
+    cout<<"category_id: "<<JsonObj1["category_id"]<<endl;
+    Json::Value JsonBBoxArr = JsonObj1["bbox"];
+    cout<<"bbox: ("<<JsonBBoxArr[0]<<", "<<JsonBBoxArr[1]<<"), ("<<JsonBBoxArr[2]<<", "<<JsonBBoxArr[3]<<")"<<endl;
+    cout<<"segmentation.size=("<<JsonObj1["segmentation"]["size"][0]<<", "<<JsonObj1["segmentation"]["size"][1]<<")"<<endl;
+    
+
+    return 0;
+
+    
+
 
 	// 普通对象
 	cout << "encoding = " << Json_ReadString(JsonRoot["encoding"]) << endl;
