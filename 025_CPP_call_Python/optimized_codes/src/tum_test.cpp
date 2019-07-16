@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "yolact.hpp"
+#include "yolact_interface_ros.hpp"
 #include "tools/TUMRGBD_DataReader.hpp"
 
 using namespace std;

@@ -17,6 +17,7 @@ if(PYTHONLIBS_FOUND)
     include_directories(${PROJECT_SOURCE_DIR})
     include_directories(BEFORE "/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/my_py_pt/lib/python3.7/site-packages/numpy/core/include/numpy")
     include_directories(BEFORE "/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/my_py_pt/lib/python3.7/site-packages/numpy/core/include")
+    link_directories("/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/my_py_pt/lib/python3.7/site-packages/numpy/core/lib")
 
     
 

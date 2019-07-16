@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "yolact_interface.hpp"
+#include "yolact_interface_ros.hpp"
 
 using namespace std;
 
