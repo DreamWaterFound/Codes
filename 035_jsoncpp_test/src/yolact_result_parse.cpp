@@ -68,11 +68,12 @@ int main(int argc, char* argv[])
     Json::Value JsonBBoxArr = JsonObj1["bbox"];
     cout<<"bbox: ("<<JsonBBoxArr[0]<<", "<<JsonBBoxArr[1]<<"), ("<<JsonBBoxArr[2]<<", "<<JsonBBoxArr[3]<<")"<<endl;
     cout<<"segmentation.size=("<<JsonObj1["segmentation"]["size"][0]<<", "<<JsonObj1["segmentation"]["size"][1]<<")"<<endl;
-    
+	cout<<"segmentation.counts= "<<JsonObj1["segmentation"]["counts"]<<endl;
+    cout<<"score="<<JsonObj1["score"]<<endl;
 
     return 0;
 
-    
+    /*
 
 
 	// 普通对象
@@ -111,6 +112,7 @@ int main(int argc, char* argv[])
 	cout << "indent.length = " << JsonRoot["indent"]["length"] << endl;
 
     return 0;
+	 */
 }
 
 int Json_ReadInt(Json::Value JV, int ori_value)

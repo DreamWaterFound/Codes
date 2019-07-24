@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/guoqing/rat_slam_ws/devel/include",
+                "/home/guoqing/ros_course_ws/devel/include",
+                "/opt/ros/kinetic/include",
+                "/home/guoqing/rat_slam_ws/src/036_rviz_visualization_test/include",
+                "/usr/include"
+            ],
+            "name": "Linux",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
