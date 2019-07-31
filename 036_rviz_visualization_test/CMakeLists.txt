@@ -135,6 +135,11 @@ include_directories(
 add_executable(basic_shape src/basic_shape.cpp)
 add_executable(basic_line src/basic_line.cpp)
 add_executable(my_line src/my_line.cpp)
+add_executable(basic_mesh_model src/basic_mesh_model.cpp)
+add_executable(markers_array src/markers_array.cpp)
+
+
+
 
 
 ## Rename C++ executable without prefix
@@ -151,6 +156,8 @@ add_executable(my_line src/my_line.cpp)
 target_link_libraries(basic_shape  ${catkin_LIBRARIES} )
 target_link_libraries(basic_line  ${catkin_LIBRARIES} )
 target_link_libraries(my_line  ${catkin_LIBRARIES} )
+target_link_libraries(basic_mesh_model  ${catkin_LIBRARIES} )
+target_link_libraries(markers_array  ${catkin_LIBRARIES} )
 
 
 
