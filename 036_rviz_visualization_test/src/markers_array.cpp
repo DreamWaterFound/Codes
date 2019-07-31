@@ -34,8 +34,8 @@ int main( int argc, char** argv )
     visualization_msgs::MarkerArray markers;
     visualization_msgs::Marker marker;
 
-    markers.markers.emplace_back();
-
+    // markers.markers.resize(markers.markers.size()+1);
+    // visualization_msgs::Marker& marker = markers.markers[markers.markers.size()-1];
     
 
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
@@ -86,20 +86,26 @@ int main( int argc, char** argv )
 
     // marker.mesh_use_embedded_materials=true;
 
+    //取消自动删除
+    marker.lifetime = ros::Duration();
+
+    markers.markers.push_back(marker);
+
+    marker.id = 1;
+    marker.pose.position.x = 1.0f;
+    markers.markers.push_back(marker);
 
 
+    marker.id = 2;
+    marker.pose.position.x = 2.0f;
+    markers.markers.push_back(marker);
+
+    marker.id = 3;
+    marker.pose.position.x = 3.0f;
     markers.markers.push_back(marker);
 
     
-    // marker.mesh_use_embedded_materials=false;
-    marker.id = 1;
 
-    marker.pose.position.x = 2.0f;
-
-
-    markers.markers.push_back(marker);
-    //取消自动删除
-    marker.lifetime = ros::Duration();
 
     // Publish the marker
     // 必须有订阅者才会发布消息

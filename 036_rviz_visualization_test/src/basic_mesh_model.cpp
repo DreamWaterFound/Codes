@@ -79,7 +79,7 @@ int main( int argc, char** argv )
     marker.color.b = 0.0f;
     marker.color.a = 1.0f;
 
-    marker.mesh_use_embedded_materials=true;
+    // marker.mesh_use_embedded_materials=true;
 
     //取消自动删除
     marker.lifetime = ros::Duration();
