@@ -28,24 +28,26 @@ int main(int argc, char* argv[])
 
 
     // 接收   
-    unsigned char buf[8]={0};
-   	boost::asio::read(sp, boost::asio::buffer(buf));
+    // unsigned char buf[8]={0};
+   	// boost::asio::read(sp, boost::asio::buffer(buf));
 
-    cout<<buf<<endl;
+    // cout<<buf<<endl;
 
-    cout<<endl<<"Terminated."<<endl;
+    // cout<<endl<<"Terminated."<<endl;
 
 
     // 发送
     // char c;
-    // unsigned char buf[1]={0};
+    unsigned char buf[]={
+        '!','M',' ',
+        ' ','1','0','0','0',
+        ' ',
+        ' ','1','0','0','0'
+    };
 
-    // while(1)
-    // {
-    //     cin>>c;
-    //     buf[1]=c;
-    //     boost::asio::write(sp, boost::asio::buffer(buf));
-    // }
+    boost::asio::write(sp, boost::asio::buffer(buf));
+
+    cout<<"Send ok!"<<endl;
 
     return 0;
 }
