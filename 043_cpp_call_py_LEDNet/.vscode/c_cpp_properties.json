@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/guoqing/libraries/opencv_331/include",
+                "/home/guoqing/libraries/opencv_331/include/opencv",
+                "/home/guoqing/.pyenv/versions/anaconda3-5.2.0/envs/pt041/include/python3.6m"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
