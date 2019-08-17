@@ -16,8 +16,11 @@ A --> B --> A
 
 嗯，很鲜明，对于轮询的方式还是很吃CPU的（尽管目前的线程中有相当一部分时间是在睡眠状态）：
 
+![轮询方式](https://github.com/DreamWaterFound/Codes/blob/master/044_Producer-consumer_model/doc/contrast.gif)
+
 而使用条件变量的方案，线程大部分时间都是在睡眠中，因此几乎不怎么占用CPU的计算资源：
 
+![条件变量方式](https://github.com/DreamWaterFound/Codes/blob/master/044_Producer-consumer_model/doc/condition.gif)
 
 
 ## Ref
