@@ -28,11 +28,23 @@ endif(NOT OPENGL_FOUND)
 #########################################################
 # Include Files
 #########################################################
-add_executable(gl_test src/main.cpp)
+add_executable(my_test_01 src/my_test_01.cpp)
+add_executable(my_test_02 src/my_test_02.cpp)
+add_executable(my_test_03 src/my_test_03.cpp)
+add_executable(my_test_04 src/my_test_04.cpp)
+add_executable(my_test_05 src/my_test_05.cpp)
+
+
 
 ########################################################
 # Linking & stuff
 #########################################################
 
 # create the program "test"
-target_link_libraries(gl_test ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(my_test_01 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(my_test_02 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(my_test_03 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(my_test_04 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(my_test_05 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+
+
