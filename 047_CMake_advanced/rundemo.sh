@@ -1,0 +1,1 @@
+/home/guoqing/Codes/047_CMake_advanced/bin/cmake_advance_test ARGS
