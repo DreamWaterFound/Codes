@@ -1,0 +1,1 @@
+./bin/serialization_demo
