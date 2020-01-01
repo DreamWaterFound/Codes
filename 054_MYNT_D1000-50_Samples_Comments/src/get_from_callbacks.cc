@@ -46,7 +46,7 @@ int main(int argc, char const* argv[]) {
     //   DEVICE_DEPTH: IMAGE_LEFT_COLOR x IMAGE_RIGHT_COLOR x IMAGE_DEPTH ✓
     //   DEVICE_ALL:   IMAGE_LEFT_COLOR ✓ IMAGE_RIGHT_COLOR ? IMAGE_DEPTH ✓
     // Note: ✓: available, x: unavailable, ?: depends on #stream_mode
-    // params.dev_mode = DeviceMode::DEVICE_ALL;
+    params.dev_mode = DeviceMode::DEVICE_ALL;
 
     // Color mode: raw(default), rectified
     // params.color_mode = ColorMode::COLOR_RECTIFIED;
@@ -59,7 +59,7 @@ int main(int argc, char const* argv[]) {
     // params.stream_mode = StreamMode::STREAM_1280x720;  // hd
     // Stream mode: left+right color
     // params.stream_mode = StreamMode::STREAM_1280x480;  // vga
-    params.stream_mode = StreamMode::STREAM_2560x720;  // hd
+    params.stream_mode = StreamMode::STREAM_1280x480;  // hd
 
     // Auto-exposure: true(default), false
     // params.state_ae = false;
@@ -68,7 +68,7 @@ int main(int argc, char const* argv[]) {
     // params.state_awb = false;
 
     // Infrared intensity: 0(default), [0,10]
-    params.ir_intensity = 4;
+    params.ir_intensity = 0;
   }
 
   // Enable what process logics

@@ -26,6 +26,8 @@
 MYNTEYE_USE_NAMESPACE
 
 int main(int argc, char const* argv[]) {
+
+  // step 0 构造数据
   Camera cam;
   DeviceInfo dev_info;
   if (!util::select(cam, &dev_info)) {
@@ -33,6 +35,7 @@ int main(int argc, char const* argv[]) {
   }
   util::print_stream_infos(cam, dev_info.index);
 
+  // step 1 打开设备
   std::cout << "Open device: " << dev_info.index << ", "
       << dev_info.name << std::endl << std::endl;
 
@@ -41,11 +44,12 @@ int main(int argc, char const* argv[]) {
     return 1;
   }
 
-  // Warning: Color stream format MJPG doesn't work.
+  // ! Warning: Color stream format MJPG doesn't work.
   OpenParams params(dev_info.index);
   cam.Open(params);
 
   // Enable this will cache the motion datas until you get them
+  // ? 直接缓存？
   cam.EnableMotionDatas();
 
   std::cout << std::endl;
@@ -57,13 +61,19 @@ int main(int argc, char const* argv[]) {
 
   std::cout << "Press ESC/Q on Windows to terminate" << std::endl;
 
+
+  // step 2 主循环
   Rate rate(params.framerate);
   util::Counter counter;
   for (;;) {
     counter.Update();
 
+    // HACK
+    MotionData a;
+
     auto motion_datas = cam.GetMotionDatas();
     if (motion_datas.size() > 0) {
+      // 这一段时间内得到的IMU数据吧
       std::cout << "Imu count: " << motion_datas.size() << std::endl;
       for (auto data : motion_datas) {
         if (data.imu) {
@@ -73,6 +83,7 @@ int main(int argc, char const* argv[]) {
               << ", x: " << data.imu->accel[0]
               << ", y: " << data.imu->accel[1]
               << ", z: " << data.imu->accel[2]
+              // 还有温度数据
               << ", temp: " << data.imu->temperature
               << std::endl;
           } else if (data.imu->flag == MYNTEYE_IMU_GYRO) {
@@ -93,7 +104,11 @@ int main(int argc, char const* argv[]) {
       std::cout << std::endl;
     }
 
-    if (_kbhit()) break;
+    if (_kbhit()) 
+    {
+      std::cout<<"Warning: !!!!!"<<std::endl;
+      break;
+    }
 
     rate.Sleep();
   }
