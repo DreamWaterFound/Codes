@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
   }
   util::print_stream_infos(cam, dev_info.index);
 
+  // 设备还是要打开之后才能够获取内参. 有的时候不打开设备也行, 但是有时候又存在一些问题.
   std::cout << "Open device: " << dev_info.index << ", "
     << dev_info.name << std::endl << std::endl;
 
@@ -58,7 +59,7 @@ int main(int argc, char *argv[]) {
     std::cout << "This device not supported to get hd image params." << std::endl;
   }
 
-  cam.Close();
+  // cam.Close();
   out.close();
   std::cout << std::endl;
   if (in_ok && ex_ok) {

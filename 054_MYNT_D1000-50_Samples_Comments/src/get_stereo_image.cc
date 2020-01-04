@@ -82,6 +82,7 @@ int main(int argc, char const* argv[]) {
 
         // Auto-exposure: true(default), false
         params.state_ae = false;
+        
 
         // Auto-white balance: true(default), false
         params.state_awb = false;
@@ -105,6 +106,11 @@ int main(int argc, char const* argv[]) {
 
     // Enable what process logics
     cam.EnableProcessMode(ProcessMode::PROC_IMU_ALL);
+
+    // DEBUG
+    cam.AutoExposureControl(false);
+    cam.AutoWhiteBalanceControl(false);
+
 
     // Enable image infos
     // cam.EnableImageInfo(true);
@@ -135,11 +141,17 @@ int main(int argc, char const* argv[]) {
     CVPainter painter;
     util::Counter counter;          // 用于在下文中计算实际帧率
 
+    
+        
+
     // step 4 Main loop
     for (;;) {
 
         // step 4.1 等待. 这意味着这个线程就阻塞了
         cam.WaitForStream();
+        // DEBUG 放在这里似乎是能够间歇性地起到作用
+        // cam.SetExposureTime(1.0f);
+
         counter.Update();
 
         if (is_left_ok) {
