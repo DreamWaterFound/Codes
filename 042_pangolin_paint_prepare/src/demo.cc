@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
         // pangolin::glDraw_x0(1.0, 100);
         // pangolin::glDraw_z0(1.0, 100);
 
+        
 
         glLineWidth(2);
         // 绘制坐标轴, 红 = x轴 绿 = y轴 蓝 = z轴. 参数表示线长
