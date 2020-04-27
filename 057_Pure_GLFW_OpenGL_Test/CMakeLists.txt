@@ -16,6 +16,17 @@ list(APPEND LINK_LIBS ${OPENGL_LIBRARIES} GL rt dl)
 # 这里按需修改
 set(glfw3_DIR "${PROJECT_SOURCE_DIR}/ThirdParty/glfw-3.3.2/install/lib/cmake/glfw3")
 find_package(glfw3 REQUIRED)
+
+# 这里按需修改
+
+set(gl3w_DIR "${PROJECT_SOURCE_DIR}/ThirdParty/gl3w/install/share/gl3w")
+find_package(gl3w REQUIRED)
+include_directories("${PROJECT_SOURCE_DIR}/ThirdParty/gl3w/install/include/gl3w")
+
+# add_library(gl3w_lib ${PROJECT_SOURCE_DIR}/ThirdParty/gl3w/install/share/gl3w/gl3w.c)
+
+
+
 # 好像是不需要添加头文件， 库的话直接写 glfw 就行了
 
 # include_directories(
@@ -39,5 +50,5 @@ add_executable(test_demo
     ${PROJECT_SOURCE_DIR}/src/main.cc
 )
 
-target_link_libraries(test_demo GL rt dl glfw)
+target_link_libraries(test_demo GL rt dl glfw gl3w)
 
